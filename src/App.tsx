@@ -9,6 +9,7 @@ import svgPaths from "./imports/svg-inxdi7sgrl";
 import imgMacMockup from "figma:asset/92178435c4f4e383b8d3a5e1650bc16d743bb194.png";
 import LogoSvg from "./assets/Vector.svg";
 import GlobeSvg from "./assets/globe.svg";
+import { translate, type LanguageCode } from "./i18n";
 import FlagCN from "./assets/flags/flag/CN.svg?url";
 import FlagHK from "./assets/flags/flag/HK.svg?url";
 import FlagHM from "./assets/flags/flag/HM.svg?url";
@@ -19,21 +20,31 @@ import FlagVN from "./assets/flags/flag/VN.svg?url";
 
 import { ExportVisualization } from "./components/ExportVisualization";
 
-const Navbar = ({ onContactClick }: { onContactClick: () => void }) => {
+const Navbar = ({
+  onContactClick,
+  language,
+  setLanguage,
+  t
+}: {
+  onContactClick: () => void;
+  language: LanguageCode;
+  setLanguage: (lang: LanguageCode) => void;
+  t: (key: string, vars?: Record<string, string | number>) => string;
+}) => {
   const { scrollY } = useScroll();
   const height = useTransform(scrollY, [0, 100], [100, 80]);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("English");
   const [isGlobeHover, setIsGlobeHover] = useState(false);
   const languageDropdownOffsetX = 12;
 
   const languages = [
-    { label: "English", flagSrc: FlagHM, flagAlt: "UK" },
-    { label: "Chinese (Traditional)", flagSrc: FlagHK, flagAlt: "Hong Kong" },
-    { label: "Chinese (Simplified)", flagSrc: FlagCN, flagAlt: "China" },
-    { label: "Vietnamese", flagSrc: FlagVN, flagAlt: "Vietnam" },
-    { label: "Russian", flagSrc: FlagRU, flagAlt: "Russia" }
+    { code: "en" as LanguageCode, label: "English", flagSrc: FlagHM, flagAlt: "UK" },
+    { code: "zh-Hant" as LanguageCode, label: "Chinese (Traditional)", flagSrc: FlagHK, flagAlt: "Hong Kong" },
+    { code: "zh-Hans" as LanguageCode, label: "Chinese (Simplified)", flagSrc: FlagCN, flagAlt: "China" },
+    { code: "vi" as LanguageCode, label: "Vietnamese", flagSrc: FlagVN, flagAlt: "Vietnam" },
+    { code: "ru" as LanguageCode, label: "Russian", flagSrc: FlagRU, flagAlt: "Russia" }
   ];
+  
   
   const textColor = useTransform(
     scrollY,
@@ -92,13 +103,13 @@ const Navbar = ({ onContactClick }: { onContactClick: () => void }) => {
           }}
           className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-inherit font-inherit"
         >
-          Product
+          {t("nav_product")}
         </button>
         <button 
           onClick={onContactClick}
           className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-inherit font-inherit"
         >
-          Contact
+          {t("nav_contact")}
         </button>
         <div className="flex items-center gap-12">
           <motion.button
@@ -118,7 +129,7 @@ const Navbar = ({ onContactClick }: { onContactClick: () => void }) => {
               className="absolute inset-0 bg-[#7C5DED]"
             />
             <span className="relative z-10 flex items-center gap-2 group-hover:text-white transition-colors duration-300">
-              Demo <motion.div variants={{ hover: { x: 4 } }} transition={{ type: "spring", stiffness: 400, damping: 10 }}><ArrowRight size={18} /></motion.div>
+              {t("nav_demo")} <motion.div variants={{ hover: { x: 4 } }} transition={{ type: "spring", stiffness: 400, damping: 10 }}><ArrowRight size={18} /></motion.div>
             </span>
           </motion.button>
           <div className="relative">
@@ -184,21 +195,22 @@ const Navbar = ({ onContactClick }: { onContactClick: () => void }) => {
                     className="absolute left-1/2 mt-4 w-[76px] bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden flex flex-col gap-1"
                     style={{ translateX: "-50%", padding: "2px", zIndex: 10000 }}
                   >
-                    {languages.map((language) => (
+                    {languages.map((lang) => (
                       <button
-                        key={language.label}
+                        key={lang.code}
                         onClick={() => {
-                          setSelectedLanguage(language.label);
+                          setLanguage(lang.code);
                           setIsLanguageOpen(false);
                         }}
+                        aria-label={lang.label}
                         style={{ paddingInline: "10px", cursor: "pointer" }}
                         className={`w-full h-10 transition-colors flex items-center justify-center rounded-lg border border-transparent cursor-pointer
-                          ${selectedLanguage === language.label ? 'bg-[#7C5DED]/10 border-[#7C5DED]/20' : 'bg-transparent hover:bg-[#efeff6]'}
+                          ${language === lang.code ? 'bg-[#7C5DED]/10 border-[#7C5DED]/20' : 'bg-transparent hover:bg-[#efeff6]'}
                         `}
                       >
                         <img
-                          src={language.flagSrc}
-                          alt={language.flagAlt}
+                          src={lang.flagSrc}
+                          alt={lang.flagAlt}
                           className="shrink-0 object-contain"
                           style={{
                             width: 38,
@@ -260,91 +272,100 @@ const MacBookMockup = () => {
   );
 };
 
-const SolutionRow = ({ icon: Icon, title, index, delay, isOpen, onToggle }: { icon: any, title: string, index: number, delay: number, isOpen: boolean, onToggle: () => void }) => {
+const SolutionRow = ({
+  icon: Icon,
+  id,
+  label,
+  index,
+  delay,
+  isOpen,
+  onToggle,
+  t
+}: {
+  icon: any;
+  id: string;
+  label: string;
+  index: number;
+  delay: number;
+  isOpen: boolean;
+  onToggle: () => void;
+  t: (key: string, vars?: Record<string, string | number>) => string;
+}) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.3 });
 
   const getExampleContent = () => {
-    switch (title.toLowerCase()) {
+    switch (id) {
       case "mathematics":
         return (
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
-              <p className="text-black mb-4">What is the derivative of 3x²</p>
+              <p className="text-black mb-4">{t("math_question")}</p>
               <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="p-3 bg-gray-50 rounded-lg">A. 3x</div>
-                <div className="p-3 bg-black text-white rounded-lg">B. 6x</div>
-                <div className="p-3 bg-gray-50 rounded-lg">C. x³</div>
-                <div className="p-3 bg-gray-50 rounded-lg">D. 9</div>
+                <div className="p-3 bg-gray-50 rounded-lg">{t("math_option_a")}</div>
+                <div className="p-3 bg-black text-white rounded-lg">{t("math_option_b")}</div>
+                <div className="p-3 bg-gray-50 rounded-lg">{t("math_option_c")}</div>
+                <div className="p-3 bg-gray-50 rounded-lg">{t("math_option_d")}</div>
               </div>
             </div>
-            <p className="text-sm font-medium text-black/40 italic">
-              Grade IQ generates precise computational checks and auto grades numeric answers with accuracy.
-            </p>
+            <p className="text-sm font-medium text-black/40 italic">{t("math_desc")}</p>
           </div>
         );
-      case "languages":
       case "english":
         return (
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
-              <p className="text-black mb-4">Fill in the blank. She ______ to the store yesterday.</p>
+              <p className="text-black mb-4">{t("english_question")}</p>
               <div className="h-10 border-b-2 border-dashed border-black/20 w-32 mb-2" />
             </div>
-            <p className="text-sm font-medium text-black/40 italic">
-              Grade IQ builds grammar focused exercises and marks language structure instantly.
-            </p>
+            <p className="text-sm font-medium text-black/40 italic">{t("english_desc")}</p>
           </div>
         );
       case "chemistry":
         return (
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
-              <p className="text-black mb-2">State how a covalent bond forms.</p>
+              <p className="text-black mb-2">{t("chemistry_question")}</p>
               <p className="text-black text-lg py-2" style={{ fontFamily: '"Comic Sans MS", "Marker Felt", cursive' }}>
-                Covalent bonds form when atoms share electrons to reach stable configurations.
+                {t("chemistry_answer")}
               </p>
               <div className="h-px bg-black/10 w-full mt-1" />
             </div>
-            <p className="text-sm font-medium text-black/40 italic">
-              Grade IQ reviews short answer chemistry responses by matching key ideas and terms to ensure the core concept is truly understood.
-            </p>
+            <p className="text-sm font-medium text-black/40 italic">{t("chemistry_desc")}</p>
           </div>
         );
       case "physics":
         return (
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
-              <p className="text-black mb-4">Explain how conservation of momentum applies when two objects collide and move together.</p>
+              <p className="text-black mb-4">{t("physics_question")}</p>
               <div className="space-y-2">
                 <div className="h-4 bg-gray-100 rounded w-full" />
                 <div className="h-4 bg-gray-100 rounded w-5/6" />
                 <div className="h-4 bg-gray-100 rounded w-4/6" />
               </div>
             </div>
-            <p className="text-sm font-medium text-black/40 italic">
-              Grade IQ walks through every line of a long answer explanation, comparing the reasoning to physics rubrics so complex thinking is rewarded.
-            </p>
+            <p className="text-sm font-medium text-black/40 italic">{t("physics_desc")}</p>
           </div>
         );
       case "biology":
         return (
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
-              <p className="text-black mb-8">Match the term to its function.</p>
+              <p className="text-black mb-8">{t("biology_question")}</p>
               <div className="relative flex justify-between gap-12 max-w-lg mx-auto min-h-[220px]">
                 {/* Left Side: Terms */}
                 <div className="space-y-6 z-10 flex flex-col justify-between">
                   <div className="flex items-center gap-3 group">
-                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium border border-black/5 w-40 text-center">Cell membrane</div>
+                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium border border-black/5 w-40 text-center">{t("biology_term1")}</div>
                     <div className="size-2 rounded-full bg-black/20 group-hover:bg-[#7C5DED] transition-colors" id="term-1" />
                   </div>
                   <div className="flex items-center gap-3 group">
-                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium border border-black/5 w-40 text-center">Mitochondria</div>
+                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium border border-black/5 w-40 text-center">{t("biology_term2")}</div>
                     <div className="size-2 rounded-full bg-black/20 group-hover:bg-[#7C5DED] transition-colors" id="term-2" />
                   </div>
                   <div className="flex items-center gap-3 group">
-                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium border border-black/5 w-40 text-center">Ribosome</div>
+                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium border border-black/5 w-40 text-center">{t("biology_term3")}</div>
                     <div className="size-2 rounded-full bg-black/20 group-hover:bg-[#7C5DED] transition-colors" id="term-3" />
                   </div>
                 </div>
@@ -369,32 +390,30 @@ const SolutionRow = ({ icon: Icon, title, index, delay, isOpen, onToggle }: { ic
                 <div className="space-y-6 z-10 flex flex-col justify-between items-end">
                   <div className="flex items-center gap-3 group">
                     <div className="size-2 rounded-full bg-black/20 group-hover:bg-[#7C5DED] transition-colors" id="def-1" />
-                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-xs font-medium border border-black/5 w-48">produces cellular energy</div>
+                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-xs font-medium border border-black/5 w-48">{t("biology_def1")}</div>
                   </div>
                   <div className="flex items-center gap-3 group">
                     <div className="size-2 rounded-full bg-black/20 group-hover:bg-[#7C5DED] transition-colors" id="def-2" />
-                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-xs font-medium border border-black/5 w-48">builds proteins</div>
+                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-xs font-medium border border-black/5 w-48">{t("biology_def2")}</div>
                   </div>
                   <div className="flex items-center gap-3 group">
                     <div className="size-2 rounded-full bg-black/20 group-hover:bg-[#7C5DED] transition-colors" id="def-3" />
-                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-xs font-medium border border-black/5 w-48">controls what enters/leaves</div>
+                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-xs font-medium border border-black/5 w-48">{t("biology_def3")}</div>
                   </div>
                 </div>
               </div>
             </div>
-            <p className="text-sm font-medium text-black/40 italic">
-              Grade IQ handles complex relational questions like matching and sorting by analyzing conceptual links rather than just text strings.
-            </p>
+            <p className="text-sm font-medium text-black/40 italic">{t("biology_desc")}</p>
           </div>
         );
-      case "computer science":
+      case "computer_science":
         return (
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
-              <p className="text-black mb-4">Recursion always requires a base case. True or false</p>
+              <p className="text-black mb-4">{t("cs_question")}</p>
               <div className="flex gap-4">
-                <div className="px-6 py-2 bg-black text-white rounded-full text-sm font-bold">True</div>
-                <div className="px-6 py-2 bg-gray-100 text-black rounded-full text-sm font-bold">False</div>
+                <div className="px-6 py-2 bg-black text-white rounded-full text-sm font-bold">{t("cs_true")}</div>
+                <div className="px-6 py-2 bg-gray-100 text-black rounded-full text-sm font-bold">{t("cs_false")}</div>
               </div>
             </div>
           </div>
@@ -402,7 +421,7 @@ const SolutionRow = ({ icon: Icon, title, index, delay, isOpen, onToggle }: { ic
       default:
         return (
           <div className="p-8 text-xl text-black/60 font-['Prompt',sans-serif]">
-            Comprehensive coverage for {title} curricula. Grade IQ analyzes your existing materials to generate varied question types including multiple choice, long-form, and practical applications, all with automated grading rubrics.
+            {t("default_desc", { title: label })}
           </div>
         );
     }
@@ -437,7 +456,7 @@ const SolutionRow = ({ icon: Icon, title, index, delay, isOpen, onToggle }: { ic
             transition={{ duration: 0.3, delay: delay + 0.1 }}
             className="font-['Prompt',sans-serif] text-xl md:text-2xl"
           >
-            {title}
+            {label}
           </motion.p>
         </div>
         
@@ -474,8 +493,8 @@ import svgPathsPen from "./imports/svg-soah9mmirx";
 import { ImportVisualization } from "./components/ImportVisualization";
 import { GenerateVisualization } from "./components/GenerateVisualization";
 
-const WordRotator = () => {
-  const words = ["PAST PAPERS", "HOMEWORK", "ASSIGNMENTS"];
+const WordRotator = ({ t }: { t: (key: string, vars?: Record<string, string | number>) => string }) => {
+  const words = [t("word_past_papers"), t("word_homework"), t("word_assignments")];
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -483,7 +502,7 @@ const WordRotator = () => {
       setIndex((prev) => (prev + 1) % words.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [words.length]);
 
   return (
     <div className="relative flex items-center justify-center h-[110px] md:h-[180x] w-full max-w-full">
@@ -547,13 +566,13 @@ const WordRotator = () => {
   );
 };
 
-const Footer = () => {
+const Footer = ({ t }: { t: (key: string, vars?: Record<string, string | number>) => string }) => {
   const currentYear = new Date().getFullYear();
 
   return (
     <footer className="bg-[#19191b] text-white py-12 px-6 md:px-24 border-t border-white/10">
       <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6 font-['Prompt',sans-serif] opacity-40 text-sm">
-        <p>© {currentYear} Grade IQ. All rights reserved.</p>
+        <p>{t("footer_rights", { year: currentYear })}</p>
       </div>
     </footer>
   );
@@ -561,6 +580,20 @@ const Footer = () => {
 
 export default function App() {
   const { scrollY } = useScroll();
+  const [language, setLanguage] = useState<LanguageCode>("en");
+  const t = (key: string, vars?: Record<string, string | number>) =>
+    translate(language, key, vars);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("gradeiq_language") as LanguageCode | null;
+    if (saved) {
+      setLanguage(saved);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("gradeiq_language", language);
+  }, [language]);
 
   const handleContactClick = () => {
     const el = document.getElementById('contact-section');
@@ -597,7 +630,11 @@ export default function App() {
   const featuresOpacity = useTransform(featuresProgress, [0.1, 0.3, 0.7, 0.95], [0, 1, 1, 0]);
   const featuresScale = useTransform(featuresProgress, [0.7, 0.95], [1, 0.95]);
 
-  const steps = ["Import", "Generate", "Export"];
+  const steps = [
+    { id: "import", label: t("step_import") },
+    { id: "generate", label: t("step_generate") },
+    { id: "export", label: t("step_export") }
+  ];
   const [activeStep, setActiveStep] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   
@@ -628,7 +665,7 @@ export default function App() {
       style={{ backgroundColor, color: textColor }}
       className="min-h-screen selection:bg-gray-500 selection:text-white transition-colors duration-300"
     >
-      <Navbar onContactClick={handleContactClick} />
+      <Navbar onContactClick={handleContactClick} language={language} setLanguage={setLanguage} t={t} />
 
       {/* Hero Section */}
       <section className="pt-40 pb-20 max-w-auto mx-auto text-center overflow-hidden">
@@ -641,10 +678,10 @@ export default function App() {
               transition={{ duration: 0.35, ease: "easeOut", delay: 0 }}
               className="font-['Anybody',sans-serif] font-black text-6xl md:text-9xl tracking-tighter"
             >
-              GENERATE
+              {t("hero_generate")}
             </motion.h1>
 
-            <WordRotator />
+            <WordRotator t={t} />
 
             <motion.h1
               initial={{ y: 16, opacity: 0 }}
@@ -652,7 +689,7 @@ export default function App() {
               transition={{ duration: 0.35, ease: "easeOut", delay: 0.16 }}
               className="font-['Anybody',sans-serif] font-black text-6xl md:text-9xl tracking-tighter"
             >
-              INSTANTLY
+              {t("hero_instantly")}
             </motion.h1>
           </div>
 
@@ -662,7 +699,7 @@ export default function App() {
             transition={{ duration: 0.3, delay: 0.4 }}
             className="mt-12 max-w-2xl font-['Prompt',sans-serif] text-xl md:text-2xl leading-relaxed opacity-70"
           >
-            Creating and grading homework and exams is time consuming. We turn past papers into new exams with answers in minutes.
+            {t("hero_tagline")}
           </motion.p>
 
           <motion.button
@@ -683,7 +720,7 @@ export default function App() {
               className="absolute inset-0 bg-[#7C5DED]"
             />
             <span className="relative z-10 flex items-center gap-2">
-              Contact Sales
+              {t("hero_contact_sales")}
               <motion.div 
                 variants={{ hover: { x: 4 } }} 
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -706,30 +743,32 @@ export default function App() {
           transition={{ duration: 0.35, ease: "easeOut" }}
           className="font-['Anybody',sans-serif] font-black text-5xl md:text-7xl mb-16 inline-block"
         >
-          EXAMPLES
+          {t("examples_title")}
         </motion.h2>
 
         <motion.div style={{ borderColor }} className="max-w-4xl mx-auto border-t text-left">
           {(() => {
             const [openIndex, setOpenIndex] = useState<number | null>(null);
             const subjects = [
-              { title: "Mathematics", icon: <div className="bg-[#77B7E9] w-full h-full flex items-center justify-center p-3"><svg viewBox="0 0 98 98" fill="none" className="w-full h-full"><path d={svgPaths.p39fda460} stroke="white" strokeWidth="7" strokeLinecap="round"/></svg></div> },
-              { title: "English", icon: <div className="bg-[#E66D6F] w-full h-full flex items-center justify-center p-3"><svg viewBox="0 0 98 98" fill="none" className="w-full h-full"><path d={svgPaths.p3e5f0370} fill="white"/></svg></div> },
-              { title: "Chemistry", icon: <div className="bg-[#a180ee] w-full h-full flex items-center justify-center p-4"><svg viewBox="0 0 58 81" fill="none" className="w-full h-full"><path d={svgPaths.p3fdc9380} fill="white"/><path d={svgPaths.p18f8e180} fill="white"/><path d={svgPaths.p1c26c6f0} fill="white"/><path d={svgPaths.p3ff11370} fill="white"/><path d={svgPaths.p3a671680} fill="white"/></svg></div> },
-              { title: "Physics", icon: <div className="bg-[#F6DA6F] w-full h-full flex items-center justify-center p-3"><svg viewBox="0 0 98 98" fill="none" className="w-full h-full"><path d={svgPaths.p25aa0ff0} fill="white"/></svg></div> },
-              { title: "Biology", icon: <div className="bg-[#a7d9b4] w-full h-full flex items-center justify-center p-4"><svg viewBox="0 0 58 71" fill="none" className="w-full h-full"><path d={svgPaths.p20ea880} fill="white"/></svg></div> },
-              { title: "Computer Science", icon: <div className="bg-[#19191b] w-full h-full flex items-center justify-center p-3"><svg viewBox="0 0 98 98" fill="none" className="w-full h-full"><rect fill="black" height="98" rx="20" width="98"/><path d={svgPaths.p7a73700} fill="white"/><path d={svgPaths.p165f700} fill="white"/><path d={svgPaths.p1f736500} fill="white"/></svg></div> }
+              { id: "mathematics", label: t("subject_mathematics"), icon: <div className="bg-[#77B7E9] w-full h-full flex items-center justify-center p-3"><svg viewBox="0 0 98 98" fill="none" className="w-full h-full"><path d={svgPaths.p39fda460} stroke="white" strokeWidth="7" strokeLinecap="round"/></svg></div> },
+              { id: "english", label: t("subject_english"), icon: <div className="bg-[#E66D6F] w-full h-full flex items-center justify-center p-3"><svg viewBox="0 0 98 98" fill="none" className="w-full h-full"><path d={svgPaths.p3e5f0370} fill="white"/></svg></div> },
+              { id: "chemistry", label: t("subject_chemistry"), icon: <div className="bg-[#a180ee] w-full h-full flex items-center justify-center p-4"><svg viewBox="0 0 58 81" fill="none" className="w-full h-full"><path d={svgPaths.p3fdc9380} fill="white"/><path d={svgPaths.p18f8e180} fill="white"/><path d={svgPaths.p1c26c6f0} fill="white"/><path d={svgPaths.p3ff11370} fill="white"/><path d={svgPaths.p3a671680} fill="white"/></svg></div> },
+              { id: "physics", label: t("subject_physics"), icon: <div className="bg-[#F6DA6F] w-full h-full flex items-center justify-center p-3"><svg viewBox="0 0 98 98" fill="none" className="w-full h-full"><path d={svgPaths.p25aa0ff0} fill="white"/></svg></div> },
+              { id: "biology", label: t("subject_biology"), icon: <div className="bg-[#a7d9b4] w-full h-full flex items-center justify-center p-4"><svg viewBox="0 0 58 71" fill="none" className="w-full h-full"><path d={svgPaths.p20ea880} fill="white"/></svg></div> },
+              { id: "computer_science", label: t("subject_compsci"), icon: <div className="bg-[#19191b] w-full h-full flex items-center justify-center p-3"><svg viewBox="0 0 98 98" fill="none" className="w-full h-full"><rect fill="black" height="98" rx="20" width="98"/><path d={svgPaths.p7a73700} fill="white"/><path d={svgPaths.p165f700} fill="white"/><path d={svgPaths.p1f736500} fill="white"/></svg></div> }
             ];
             
             return subjects.map((subject, i) => (
               <SolutionRow 
-                key={subject.title}
-                title={subject.title} 
+                key={subject.id}
+                id={subject.id}
+                label={subject.label}
                 index={i} 
                 delay={i * 0.1}
                 icon={subject.icon}
                 isOpen={openIndex === i}
                 onToggle={() => setOpenIndex(openIndex === i ? null : i)}
+                t={t}
               />
             ));
           })()}
@@ -742,12 +781,17 @@ export default function App() {
           className="mt-24 p-12 md:p-16 border border-black/5 rounded-[40px] bg-gray-50/50 flex flex-col items-center text-center gap-8"
         >
           <div className="max-w-3xl">
-            <h3 className="font-['Anybody',sans-serif] font-black text-3xl md:text-4xl mb-4 uppercase tracking-tight">Additional Features</h3>
+            <h3 className="font-['Anybody',sans-serif] font-black text-3xl md:text-4xl mb-4 uppercase tracking-tight">{t("additional_features_title")}</h3>
             <p className="font-['Prompt',sans-serif] text-xl opacity-70 leading-relaxed">
-              Looking for something else? We're constantly expanding our subject library. Modules for <span className="font-semibold">History</span>, <span className="font-semibold">Geography</span>, and <span className="font-semibold">Economics</span> are currently in <span className="font-semibold">early access</span>.
+              {t("additional_features_body", {
+                history: t("history"),
+                geography: t("geography"),
+                economics: t("economics"),
+                early_access: t("early_access")
+              })}
             </p>
             <p className="font-['Prompt',sans-serif] text-lg opacity-40 mt-4">
-              Discuss custom integrations or request additional features for your institution through our contact form below.
+              {t("additional_features_note")}
             </p>
           </div>
         </motion.div>
@@ -764,7 +808,7 @@ export default function App() {
               className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
             >
               <h2 className="font-['Anybody',sans-serif] font-black text-5xl md:text-7xl uppercase tracking-tight text-white leading-none">
-                HOW IT WORKS
+                {t("how_it_works_title")}
               </h2>
             </motion.div>
 
@@ -779,7 +823,7 @@ export default function App() {
                 <div className="space-y-4">
                   {steps.map((step, i) => (
                     <div 
-                      key={step}
+                      key={step.id}
                       className="relative pl-6 group"
                     >
                       <motion.div 
@@ -792,7 +836,7 @@ export default function App() {
                       <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-white/10" />
                       
                       <h3 className={`font-['Prompt',sans-serif] font-medium text-lg transition-all duration-300 ${activeStep === i ? 'text-white translate-x-1' : 'text-white/30'}`}>
-                        {step}
+                        {step.label}
                       </h3>
                     </div>
                   ))}
@@ -804,7 +848,7 @@ export default function App() {
                 <div className="relative aspect-video w-full overflow-hidden sm:overflow-visible">
                   {steps.map((step, i) => (
                     <motion.div
-                      key={step}
+                      key={step.id}
                       initial={false}
                       animate={{ 
                         y: i < activeStep ? -400 : (i - activeStep) * 20,
@@ -817,9 +861,9 @@ export default function App() {
                       className="absolute inset-0 bg-white rounded-3xl md:rounded-[40px] shadow-[0_30px_60px_rgba(0,0,0,0.3)] flex items-center justify-center border border-black/5"
                     >
                       <div className="absolute inset-0 rounded-[inherit] overflow-hidden">
-                        {i === 0 && <ImportVisualization progress={scrollYProgress} />}
-                        {i === 1 && <GenerateVisualization />}
-                        {i === 2 && <ExportVisualization />}
+                        {i === 0 && <ImportVisualization progress={scrollYProgress} t={t} />}
+                        {i === 1 && <GenerateVisualization t={t} />}
+                        {i === 2 && <ExportVisualization t={t} />}
                       </div>
                       <div className="absolute inset-0 bg-gradient-to-tr from-black/5 to-transparent pointer-events-none rounded-[inherit]" />
                     </motion.div>
@@ -838,9 +882,9 @@ export default function App() {
                         transition={{ duration: 0.5 }}
                       >
                         <p className="font-['Prompt',sans-serif] text-xl md:text-2xl leading-relaxed opacity-70 text-white">
-                          {activeStep === 0 && "Simply upload PDF files of previous exams into the source folder"}
-                          {activeStep === 1 && "AI identifies key topics and generates fresh, relevant questions."}
-                          {activeStep === 2 && "Download your new, fully curated exam with a comprehensive marking scheme instantly."}
+                          {activeStep === 0 && t("step_desc_import")}
+                          {activeStep === 1 && t("step_desc_generate")}
+                          {activeStep === 2 && t("step_desc_export")}
                         </p>
                       </motion.div>
                     )}
@@ -866,8 +910,8 @@ export default function App() {
             transition={{ duration: 0.5 }}
             className="text-center mb-16"
           >
-            <h2 className="font-['Anybody',sans-serif] font-black text-5xl md:text-7xl mb-6 uppercase tracking-tight">Get in Touch</h2>
-            <p className="font-['Prompt',sans-serif] text-xl opacity-60">Ready to transform your examination workflow? Let's talk.</p>
+            <h2 className="font-['Anybody',sans-serif] font-black text-5xl md:text-7xl mb-6 uppercase tracking-tight">{t("contact_title")}</h2>
+            <p className="font-['Prompt',sans-serif] text-xl opacity-60">{t("contact_subtitle")}</p>
           </motion.div>
 
           <motion.form
@@ -882,41 +926,41 @@ export default function App() {
             <input type="hidden" name="_subject" value="New Contact Form Submission" />
             <input type="hidden" name="_captcha" value="false" />
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-lg font-['Prompt',sans-serif] opacity-80">Name</Label>
+              <Label htmlFor="name" className="text-lg font-['Prompt',sans-serif] opacity-80">{t("contact_name")}</Label>
               <Input
                 id="name"
                 name="name"
-                placeholder="John Doe"
+                placeholder={t("contact_name_placeholder")}
                 required
                 className="h-16 bg-white/5 border-white/10 text-xl px-6 focus:border-white/40 transition-colors"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-lg font-['Prompt',sans-serif] opacity-80">Email</Label>
+              <Label htmlFor="email" className="text-lg font-['Prompt',sans-serif] opacity-80">{t("contact_email")}</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="john@example.com"
+                placeholder={t("contact_email_placeholder")}
                 required
                 className="h-16 bg-white/5 border-white/10 text-xl px-6 focus:border-white/40 transition-colors"
               />
             </div>
             <div className="md:col-span-2 space-y-2">
-              <Label htmlFor="company" className="text-lg font-['Prompt',sans-serif] opacity-80">Company</Label>
+              <Label htmlFor="company" className="text-lg font-['Prompt',sans-serif] opacity-80">{t("contact_company")}</Label>
               <Input
                 id="company"
                 name="company"
-                placeholder="Institution or School Name"
+                placeholder={t("contact_company_placeholder")}
                 className="h-16 bg-white/5 border-white/10 text-xl px-6 focus:border-white/40 transition-colors"
               />
             </div>
             <div className="md:col-span-2 space-y-2">
-              <Label htmlFor="message" className="text-lg font-['Prompt',sans-serif] opacity-80">Message</Label>
+              <Label htmlFor="message" className="text-lg font-['Prompt',sans-serif] opacity-80">{t("contact_message")}</Label>
               <Textarea
                 id="message"
                 name="message"
-                placeholder="Tell us about your needs..."
+                placeholder={t("contact_message_placeholder")}
                 required
                 className="min-h-40 bg-white/5 border-white/10 text-xl p-6 focus:border-white/40 transition-colors"
               />
@@ -938,7 +982,7 @@ export default function App() {
                   className="absolute inset-0 bg-[#7C5DED]"
                 />
                 <span className="relative z-10 group-hover:text-white transition-colors duration-300">
-                  Send Message
+                  {t("contact_send")}
                 </span>
               </motion.button>
             </div>
@@ -946,7 +990,7 @@ export default function App() {
         </div>
       </section>
 
-      <Footer />
+      <Footer t={t} />
     </motion.div>
   );
 }

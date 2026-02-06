@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { FileText, Download, CheckCircle2, ChevronDown, FileJson, FileCode } from 'lucide-react';
 
-export const ExportVisualization = () => {
+export const ExportVisualization = ({
+  t
+}: {
+  t: (key: string, vars?: Record<string, string | number>) => string;
+}) => {
   const [selectedFormat, setSelectedFormat] = useState('pdf');
   const [isExporting, setIsExporting] = useState(false);
   const [isDone, setIsDone] = useState(false);
@@ -17,25 +21,25 @@ export const ExportVisualization = () => {
   };
 
   const paperDetails = [
-    { label: "Subject", value: "Physics (Advanced)" },
-    { label: "Year", value: "2024 Mock" },
-    { label: "Questions", value: "45 Items" },
-    { label: "Pages", value: "12 Pages" },
-    { label: "File Size", value: "2.4 MB" }
+    { label: t("export_subject"), value: t("export_subject_value") },
+    { label: t("export_year"), value: t("export_year_value") },
+    { label: t("export_questions"), value: t("export_questions_value") },
+    { label: t("export_pages"), value: t("export_pages_value") },
+    { label: t("export_file_size"), value: t("export_file_size_value") }
   ];
 
   const formats = [
-    { id: 'pdf', name: 'PDF Document', icon: <FileText className="size-4" />, ext: '.pdf' },
-    { id: 'docx', name: 'Word Document', icon: <FileCode className="size-4" />, ext: '.docx' },
-    { id: 'json', name: 'LMS JSON', icon: <FileJson className="size-4" />, ext: '.json' }
+    { id: 'pdf', name: t("export_format_pdf"), icon: <FileText className="size-4" />, ext: '.pdf' },
+    { id: 'docx', name: t("export_format_word"), icon: <FileCode className="size-4" />, ext: '.docx' },
+    { id: 'json', name: t("export_format_lms"), icon: <FileJson className="size-4" />, ext: '.json' }
   ];
 
   return (
     <div className="p-8 md:p-12 text-black font-['Prompt',sans-serif] h-full flex flex-col">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h4 className="text-xl font-bold mb-1">Export Settings</h4>
-          <p className="text-sm text-black/40">Configure your final exam paper</p>
+          <h4 className="text-xl font-bold mb-1">{t("export_title")}</h4>
+          <p className="text-sm text-black/40">{t("export_subtitle")}</p>
         </div>
         <div className="size-12 bg-[#7C5DED]/10 rounded-xl flex items-center justify-center text-[#7C5DED]">
           <Download size={24} />
@@ -45,7 +49,7 @@ export const ExportVisualization = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
         {/* Paper Details */}
         <div className="space-y-4">
-          <p className="text-xs font-bold uppercase tracking-wider text-black/30">Paper Details</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-black/30">{t("export_paper_details")}</p>
           <div className="bg-gray-50 rounded-2xl p-5 border border-black/5 space-y-3">
             {paperDetails.map((detail) => (
               <div key={detail.label} className="flex justify-between items-center text-sm">
@@ -59,7 +63,7 @@ export const ExportVisualization = () => {
         {/* Export Controls */}
         <div className="space-y-6">
           <div className="space-y-3">
-            <p className="text-xs font-bold uppercase tracking-wider text-black/30">File Type</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-black/30">{t("export_file_type")}</p>
             <div className="space-y-2">
               {formats.map((format) => (
                 <button
@@ -103,7 +107,7 @@ export const ExportVisualization = () => {
             ) : (
               <Download size={20} />
             )}
-            {isExporting ? 'Generating Paper...' : isDone ? 'Paper Downloaded' : 'Export Final Paper'}
+            {isExporting ? t("export_generating") : isDone ? t("export_done") : t("export_button")}
           </button>
         </div>
       </div>

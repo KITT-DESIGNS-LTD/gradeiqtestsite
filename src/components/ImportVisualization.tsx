@@ -4,22 +4,23 @@ import svgPaths from "../imports/svg-5bl4i1mg71";
 
 interface ImportVisualizationProps {
   progress: MotionValue<number>;
+  t: (key: string, vars?: Record<string, string | number>) => string;
 }
 
-export function ImportVisualization({ progress }: ImportVisualizationProps) {
+export function ImportVisualization({ progress, t }: ImportVisualizationProps) {
   // Map global scroll progress to local step-0 progress (roughly 0.22 to 0.42)
   const buttonColor = useTransform(progress, [0.32, 0.42], ["#14171a", "#7C5DED"]);
   
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedFolder, setSelectedFolder] = useState("Mathematics");
+  const [selectedFolder, setSelectedFolder] = useState("subject_mathematics");
 
   const folders = [
-    "Mathematics",
-    "English",
-    "Chemistry",
-    "Physics",
-    "Biology",
-    "Computer Science"
+    { key: "subject_mathematics", label: t("subject_mathematics") },
+    { key: "subject_english", label: t("subject_english") },
+    { key: "subject_chemistry", label: t("subject_chemistry") },
+    { key: "subject_physics", label: t("subject_physics") },
+    { key: "subject_biology", label: t("subject_biology") },
+    { key: "subject_compsci", label: t("subject_compsci") }
   ];
 
   return (
@@ -38,7 +39,7 @@ export function ImportVisualization({ progress }: ImportVisualizationProps) {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-lg md:text-xl font-bold text-black uppercase whitespace-nowrap"
           >
-            Upload Papers
+            {t("import_upload_papers")}
           </motion.h3>
           <div className="flex items-center gap-4 flex-1 justify-end">
             <div className="relative z-20">
@@ -49,7 +50,9 @@ export function ImportVisualization({ progress }: ImportVisualizationProps) {
                 <svg className="size-3.5" viewBox="0 0 13 11" fill="none">
                   <path d={svgPaths.p35c30800} fill="#7C5DED" />
                 </svg>
-                <span className="text-[#14171a] text-xs font-bold uppercase tracking-tight">{selectedFolder}</span>
+                <span className="text-[#14171a] text-xs font-bold uppercase tracking-tight">
+                  {t(selectedFolder)}
+                </span>
                 <motion.svg 
                   animate={{ rotate: isOpen ? 180 : 0 }}
                   className="size-2.5" 
@@ -75,17 +78,17 @@ export function ImportVisualization({ progress }: ImportVisualizationProps) {
                     >
                       {folders.map((folder) => (
                         <button
-                          key={folder}
+                          key={folder.key}
                           onClick={() => {
-                            setSelectedFolder(folder);
+                            setSelectedFolder(folder.key);
                             setIsOpen(false);
                           }}
                           className={`w-full text-left px-4 py-2.5 text-xs font-bold uppercase tracking-tight transition-colors flex items-center gap-2
-                            ${selectedFolder === folder ? 'bg-[#7C5DED]/5 text-[#7C5DED]' : 'text-[#6b7280] hover:bg-[#f3f4f6]'}
+                            ${selectedFolder === folder.key ? 'bg-[#7C5DED]/5 text-[#7C5DED]' : 'text-[#6b7280] hover:bg-[#f3f4f6]'}
                           `}
                         >
-                          <div className={`size-1.5 rounded-full ${selectedFolder === folder ? 'bg-[#7C5DED]' : 'bg-transparent'}`} />
-                          {folder}
+                          <div className={`size-1.5 rounded-full ${selectedFolder === folder.key ? 'bg-[#7C5DED]' : 'bg-transparent'}`} />
+                          {folder.label}
                         </button>
                       ))}
                     </motion.div>
@@ -115,13 +118,13 @@ export function ImportVisualization({ progress }: ImportVisualizationProps) {
             </svg>
           </div>
           
-          <p className="text-[#6b7280] font-medium text-sm md:text-base text-center">Drop PDF or Word Files here</p>
+          <p className="text-[#6b7280] font-medium text-sm md:text-base text-center">{t("import_drop_files")}</p>
 
           <motion.button 
             style={{ backgroundColor: buttonColor }}
             className="px-6 md:px-10 py-2.5 md:py-3 rounded-xl text-white text-sm md:text-base font-bold transition-shadow hover:shadow-lg"
           >
-            Import
+            {t("import_button")}
           </motion.button>
         </motion.div>
       </motion.div>
