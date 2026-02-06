@@ -493,7 +493,15 @@ import svgPathsPen from "./imports/svg-soah9mmirx";
 import { ImportVisualization } from "./components/ImportVisualization";
 import { GenerateVisualization } from "./components/GenerateVisualization";
 
-const WordRotator = ({ t }: { t: (key: string, vars?: Record<string, string | number>) => string }) => {
+const WordRotator = ({
+  t,
+  headingFontFamily,
+  heroScale
+}: {
+  t: (key: string, vars?: Record<string, string | number>) => string;
+  headingFontFamily: string;
+  heroScale: number;
+}) => {
   const words = [t("word_past_papers"), t("word_homework"), t("word_assignments")];
   const [index, setIndex] = useState(0);
 
@@ -556,7 +564,12 @@ const WordRotator = ({ t }: { t: (key: string, vars?: Record<string, string | nu
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -40, opacity: 0 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
-            className="font-['Anybody',sans-serif] font-black text-4xl md:text-8xl lg:text-9xl tracking-tighter text-white whitespace-nowrap block"
+            className="font-['Anybody',sans-serif] font-black tracking-tighter text-white whitespace-nowrap block text-4xl md:text-8xl lg:text-9xl"
+            style={{
+              fontFamily: headingFontFamily,
+              transform: `scale(${heroScale})`,
+              transformOrigin: "center"
+            }}
           >
             {words[index]}
           </motion.span>
@@ -583,6 +596,11 @@ export default function App() {
   const [language, setLanguage] = useState<LanguageCode>("en");
   const t = (key: string, vars?: Record<string, string | number>) =>
     translate(language, key, vars);
+  const headingFontFamily =
+    language === "vi" ? '"Be Vietnam Pro", sans-serif' : '"Anybody", sans-serif';
+  const isVietnamese = language === "vi";
+  const isRussian = language === "ru";
+  const heroScale = isVietnamese ? 0.65 : isRussian ? 0.9 : 1;
 
   useEffect(() => {
     const saved = localStorage.getItem("gradeiq_language") as LanguageCode | null;
@@ -671,23 +689,33 @@ export default function App() {
       <section className="pt-40 pb-20 max-w-auto mx-auto text-center overflow-hidden">
         <div className="flex flex-col items-center">
           {/* Headline */}
-          <div className="relative flex flex-col items-center gap-4 w-full">
+          <div className={`relative flex flex-col items-center w-full ${isVietnamese ? "gap-6" : "gap-4"}`}>
             <motion.h1
               initial={{ y: 16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.35, ease: "easeOut", delay: 0 }}
-              className="font-['Anybody',sans-serif] font-black text-6xl md:text-9xl tracking-tighter"
+              className="font-['Anybody',sans-serif] font-black tracking-tighter text-6xl md:text-9xl"
+              style={{
+                fontFamily: headingFontFamily,
+                transform: `scale(${heroScale})`,
+                transformOrigin: "center"
+              }}
             >
               {t("hero_generate")}
             </motion.h1>
 
-            <WordRotator t={t} />
+            <WordRotator t={t} headingFontFamily={headingFontFamily} heroScale={heroScale} />
 
             <motion.h1
               initial={{ y: 16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.35, ease: "easeOut", delay: 0.16 }}
-              className="font-['Anybody',sans-serif] font-black text-6xl md:text-9xl tracking-tighter"
+              className="font-['Anybody',sans-serif] font-black tracking-tighter text-6xl md:text-9xl"
+              style={{
+                fontFamily: headingFontFamily,
+                transform: `scale(${heroScale})`,
+                transformOrigin: "center"
+              }}
             >
               {t("hero_instantly")}
             </motion.h1>
@@ -742,6 +770,7 @@ export default function App() {
           viewport={{ once: true }}
           transition={{ duration: 0.35, ease: "easeOut" }}
           className="font-['Anybody',sans-serif] font-black text-5xl md:text-7xl mb-16 inline-block"
+          style={{ fontFamily: headingFontFamily }}
         >
           {t("examples_title")}
         </motion.h2>
@@ -781,7 +810,12 @@ export default function App() {
           className="mt-24 p-12 md:p-16 border border-black/5 rounded-[40px] bg-gray-50/50 flex flex-col items-center text-center gap-8"
         >
           <div className="max-w-3xl">
-            <h3 className="font-['Anybody',sans-serif] font-black text-3xl md:text-4xl mb-4 uppercase tracking-tight">{t("additional_features_title")}</h3>
+            <h3
+              className="font-['Anybody',sans-serif] font-black text-3xl md:text-4xl mb-4 uppercase tracking-tight"
+              style={{ fontFamily: headingFontFamily }}
+            >
+              {t("additional_features_title")}
+            </h3>
             <p className="font-['Prompt',sans-serif] text-xl opacity-70 leading-relaxed">
               {t("additional_features_body", {
                 history: t("history"),
@@ -807,7 +841,10 @@ export default function App() {
               style={{ opacity: titleOpacity, scale: titleScale }}
               className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
             >
-              <h2 className="font-['Anybody',sans-serif] font-black text-5xl md:text-7xl uppercase tracking-tight text-white leading-none">
+              <h2
+                className="font-['Anybody',sans-serif] font-black text-5xl md:text-7xl uppercase tracking-tight text-white leading-none"
+                style={{ fontFamily: headingFontFamily }}
+              >
                 {t("how_it_works_title")}
               </h2>
             </motion.div>
@@ -910,7 +947,12 @@ export default function App() {
             transition={{ duration: 0.5 }}
             className="text-center mb-16"
           >
-            <h2 className="font-['Anybody',sans-serif] font-black text-5xl md:text-7xl mb-6 uppercase tracking-tight">{t("contact_title")}</h2>
+            <h2
+              className="font-['Anybody',sans-serif] font-black text-5xl md:text-7xl mb-6 uppercase tracking-tight"
+              style={{ fontFamily: headingFontFamily }}
+            >
+              {t("contact_title")}
+            </h2>
             <p className="font-['Prompt',sans-serif] text-xl opacity-60">{t("contact_subtitle")}</p>
           </motion.div>
 

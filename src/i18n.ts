@@ -339,7 +339,7 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     hero_tagline:
       "Việc tạo và chấm bài tập, bài thi rất tốn thời gian. Chúng tôi biến đề cũ thành đề mới kèm đáp án chỉ trong vài phút.",
     hero_contact_sales: "Liên hệ bán hàng",
-    word_past_papers: "ĐỀ CŨ",
+    word_past_papers: "ĐÊ CŨ",
     word_homework: "BÀI TẬP",
     word_assignments: "BÀI GIAO",
     examples_title: "VÍ DỤ",
@@ -451,9 +451,9 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     hero_tagline:
       "Создание и проверка домашних заданий и экзаменов занимают много времени. Мы превращаем прошлые варианты в новые экзамены с ответами за минуты.",
     hero_contact_sales: "Связаться с отделом продаж",
-    word_past_papers: "ПРОШЛЫЕ ВАРИАНТЫ",
-    word_homework: "ДОМАШНИЕ ЗАДАНИЯ",
-    word_assignments: "ЗАДАНИЯ",
+    word_past_papers: "ПРОШЛЫЕ",
+    word_homework: "ДОМАШКА",
+    word_assignments: "РАБОТЫ",
     examples_title: "ПРИМЕРЫ",
     additional_features_title: "Дополнительные возможности",
     additional_features_body:
