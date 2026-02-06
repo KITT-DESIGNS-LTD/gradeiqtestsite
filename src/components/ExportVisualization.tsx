@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { FileText, Download, CheckCircle2, ChevronDown, FileJson, FileCode } from 'lucide-react';
+const samplePdfUrl = new URL("../assets/Grade IQ Sample.pdf", import.meta.url).href;
 
 export const ExportVisualization = ({
   t
@@ -16,6 +17,12 @@ export const ExportVisualization = ({
     setTimeout(() => {
       setIsExporting(false);
       setIsDone(true);
+      const link = document.createElement("a");
+      link.href = samplePdfUrl;
+      link.download = "Grade IQ Sample.pdf";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
       setTimeout(() => setIsDone(false), 3000);
     }, 2000);
   };
@@ -30,8 +37,7 @@ export const ExportVisualization = ({
 
   const formats = [
     { id: 'pdf', name: t("export_format_pdf"), icon: <FileText className="size-4" />, ext: '.pdf' },
-    { id: 'docx', name: t("export_format_word"), icon: <FileCode className="size-4" />, ext: '.docx' },
-    { id: 'json', name: t("export_format_lms"), icon: <FileJson className="size-4" />, ext: '.json' }
+    { id: 'docx', name: t("export_format_word"), icon: <FileCode className="size-4" />, ext: '.docx' }
   ];
 
   return (
