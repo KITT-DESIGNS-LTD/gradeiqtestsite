@@ -8,6 +8,12 @@ import { Button } from "./components/ui/button";
 import svgPaths from "./imports/svg-inxdi7sgrl";
 import imgMacMockup from "figma:asset/92178435c4f4e383b8d3a5e1650bc16d743bb194.png";
 import LogoSvg from "./assets/Vector.svg";
+import GlobeSvg from "./assets/globe.svg";
+import FlagCN from "./assets/flags/flag/CN.svg?url";
+import FlagHK from "./assets/flags/flag/HK.svg?url";
+import FlagHM from "./assets/flags/flag/HM.svg?url";
+import FlagRU from "./assets/flags/flag/RU.svg?url";
+import FlagVN from "./assets/flags/flag/VN.svg?url";
 
 // --- Components ---
 
@@ -16,6 +22,18 @@ import { ExportVisualization } from "./components/ExportVisualization";
 const Navbar = ({ onContactClick }: { onContactClick: () => void }) => {
   const { scrollY } = useScroll();
   const height = useTransform(scrollY, [0, 100], [100, 80]);
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("English");
+  const [isGlobeHover, setIsGlobeHover] = useState(false);
+  const languageDropdownOffsetX = 12;
+
+  const languages = [
+    { label: "English", flagSrc: FlagHM, flagAlt: "UK" },
+    { label: "Chinese (Traditional)", flagSrc: FlagHK, flagAlt: "Hong Kong" },
+    { label: "Chinese (Simplified)", flagSrc: FlagCN, flagAlt: "China" },
+    { label: "Vietnamese", flagSrc: FlagVN, flagAlt: "Vietnam" },
+    { label: "Russian", flagSrc: FlagRU, flagAlt: "Russia" }
+  ];
   
   const textColor = useTransform(
     scrollY,
@@ -40,6 +58,13 @@ const Navbar = ({ onContactClick }: { onContactClick: () => void }) => {
     [0, 2800, 3100],
     ["#ffffff", "#ffffff", "#19191b"]
   );
+
+  const globeFilter = useTransform(
+    scrollY,
+    [0, 2800, 3100],
+    ["none", "none", "invert(1) brightness(2)"]
+  );
+  const globeActiveFilter = "invert(41%) sepia(85%) saturate(3370%) hue-rotate(239deg) brightness(95%) contrast(96%)";
 
   const logoFilter = useTransform(
     scrollY,
@@ -75,26 +100,121 @@ const Navbar = ({ onContactClick }: { onContactClick: () => void }) => {
         >
           Contact
         </button>
-        <motion.button
-          initial="initial"
-          whileHover="hover"
-          whileTap={{ scale: 0.98 }}
-          onClick={onContactClick}
-          style={{ backgroundColor: buttonBg, color: buttonText }}
-          className="relative px-6 py-2.5 rounded-full flex items-center gap-2 cursor-pointer font-medium overflow-hidden group transition-colors duration-300"
-        >
-          <motion.div 
-            variants={{
-              initial: { x: "-100%" },
-              hover: { x: 0 }
-            }}
-            transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
-            className="absolute inset-0 bg-[#7C5DED]"
-          />
-          <span className="relative z-10 flex items-center gap-2 group-hover:text-white transition-colors duration-300">
-            Demo <motion.div variants={{ hover: { x: 4 } }} transition={{ type: "spring", stiffness: 400, damping: 10 }}><ArrowRight size={18} /></motion.div>
-          </span>
-        </motion.button>
+        <div className="flex items-center gap-12">
+          <motion.button
+            initial="initial"
+            whileHover="hover"
+            whileTap={{ scale: 0.98 }}
+            onClick={onContactClick}
+            style={{ backgroundColor: buttonBg, color: buttonText }}
+            className="relative px-6 py-2.5 rounded-full flex items-center gap-2 cursor-pointer font-medium overflow-hidden group transition-colors duration-300"
+          >
+            <motion.div 
+              variants={{
+                initial: { x: "-100%" },
+                hover: { x: 0 }
+              }}
+              transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
+              className="absolute inset-0 bg-[#7C5DED]"
+            />
+            <span className="relative z-10 flex items-center gap-2 group-hover:text-white transition-colors duration-300">
+              Demo <motion.div variants={{ hover: { x: 4 } }} transition={{ type: "spring", stiffness: 400, damping: 10 }}><ArrowRight size={18} /></motion.div>
+            </span>
+          </motion.button>
+          <div className="relative">
+            <motion.button
+              type="button"
+              aria-label="Language"
+              onClick={() => setIsLanguageOpen((prev) => !prev)}
+              onHoverStart={() => setIsGlobeHover(true)}
+              onHoverEnd={() => setIsGlobeHover(false)}
+              initial="initial"
+              whileHover="hover"
+              className="relative block shrink-0 cursor-pointer rounded-full"
+            >
+              <motion.svg
+                viewBox="0 0 40 40"
+                className="absolute z-0"
+                style={{ width: 40, height: 40, left: -8, top: -8 }}
+                variants={{
+                  initial: { opacity: 0 },
+                  hover: { opacity: 1 }
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                <motion.circle
+                  cx="20"
+                  cy="20"
+                  r="18"
+                  fill="none"
+                  stroke="#7C5DED"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  variants={{
+                    initial: { pathLength: 0 },
+                    hover: { pathLength: 1 }
+                  }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                />
+              </motion.svg>
+              <motion.img
+                src={GlobeSvg}
+                alt=""
+                className="relative z-10 block"
+                style={{
+                  width: 24,
+                  height: 24,
+                  filter: isGlobeHover || isLanguageOpen ? globeActiveFilter : globeFilter
+                }}
+              />
+            </motion.button>
+
+            <AnimatePresence>
+              {isLanguageOpen && (
+                <>
+                  <div
+                    className="fixed inset-0"
+                    style={{ zIndex: 9999 }}
+                    onClick={() => setIsLanguageOpen(false)}
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.96, x: languageDropdownOffsetX }}
+                    animate={{ opacity: 1, y: 0, scale: 1, x: languageDropdownOffsetX }}
+                    exit={{ opacity: 0, y: 10, scale: 0.96, x: languageDropdownOffsetX }}
+                    className="absolute left-1/2 mt-4 w-[76px] bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden flex flex-col gap-1"
+                    style={{ translateX: "-50%", padding: "2px", zIndex: 10000 }}
+                  >
+                    {languages.map((language) => (
+                      <button
+                        key={language.label}
+                        onClick={() => {
+                          setSelectedLanguage(language.label);
+                          setIsLanguageOpen(false);
+                        }}
+                        style={{ paddingInline: "10px", cursor: "pointer" }}
+                        className={`w-full h-10 transition-colors flex items-center justify-center rounded-lg border border-transparent cursor-pointer
+                          ${selectedLanguage === language.label ? 'bg-[#7C5DED]/10 border-[#7C5DED]/20' : 'bg-transparent hover:bg-[#efeff6]'}
+                        `}
+                      >
+                        <img
+                          src={language.flagSrc}
+                          alt={language.flagAlt}
+                          className="shrink-0 object-contain"
+                          style={{
+                            width: 38,
+                            height: 28,
+                            maxWidth: "none",
+                            maxHeight: "none"
+                          }}
+                        />
+                      </button>
+                    ))}
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
     </motion.nav>
   );
