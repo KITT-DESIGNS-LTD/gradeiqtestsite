@@ -13,6 +13,7 @@ import { translate, type LanguageCode } from "./i18n";
 import FlagCN from "./assets/flags/flag/CN.svg?url";
 import FlagHK from "./assets/flags/flag/HK.svg?url";
 import FlagHM from "./assets/flags/flag/HM.svg?url";
+import FlagID from "./assets/flags/flag/ID.svg?url";
 import FlagRU from "./assets/flags/flag/RU.svg?url";
 import FlagVN from "./assets/flags/flag/VN.svg?url";
 
@@ -41,6 +42,7 @@ const Navbar = ({
     { code: "en" as LanguageCode, label: "English", flagSrc: FlagHM, flagAlt: "UK" },
     { code: "zh-Hant" as LanguageCode, label: "Chinese (Traditional)", flagSrc: FlagHK, flagAlt: "Hong Kong" },
     { code: "zh-Hans" as LanguageCode, label: "Chinese (Simplified)", flagSrc: FlagCN, flagAlt: "China" },
+    { code: "id" as LanguageCode, label: "Indonesian", flagSrc: FlagID, flagAlt: "Indonesia" },
     { code: "vi" as LanguageCode, label: "Vietnamese", flagSrc: FlagVN, flagAlt: "Vietnam" },
     { code: "ru" as LanguageCode, label: "Russian", flagSrc: FlagRU, flagAlt: "Russia" }
   ];
@@ -558,21 +560,19 @@ const WordRotator = ({
       {/* The Text - Centered over the bar */}
       <div className="relative z-10 w-full flex items-center justify-center">
         <AnimatePresence mode="wait">
-          <motion.span
-            key={words[index]}
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -40, opacity: 0 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-            className="font-['Anybody',sans-serif] font-black tracking-tighter text-white whitespace-nowrap block text-4xl md:text-8xl lg:text-9xl"
-            style={{
-              fontFamily: headingFontFamily,
-              transform: `scale(${heroScale})`,
-              transformOrigin: "center"
-            }}
-          >
-            {words[index]}
-          </motion.span>
+          <div style={{ transform: `scale(${heroScale})`, transformOrigin: "center" }}>
+            <motion.span
+              key={words[index]}
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -40, opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="font-['Anybody',sans-serif] font-black tracking-tighter text-white whitespace-nowrap block text-4xl md:text-8xl lg:text-9xl"
+              style={{ fontFamily: headingFontFamily }}
+            >
+              {words[index]}
+            </motion.span>
+          </div>
         </AnimatePresence>
       </div>
     </div>
@@ -600,7 +600,8 @@ export default function App() {
     language === "vi" ? '"Be Vietnam Pro", sans-serif' : '"Anybody", sans-serif';
   const isVietnamese = language === "vi";
   const isRussian = language === "ru";
-  const heroScale = isVietnamese ? 0.65 : isRussian ? 0.9 : 1;
+  const heroScale =
+    isVietnamese ? 0.65 : language === "zh-Hans" || language === "zh-Hant" ? 0.75 : isRussian ? 0.9 : 1;
 
   useEffect(() => {
     const saved = localStorage.getItem("gradeiq_language") as LanguageCode | null;
@@ -690,35 +691,31 @@ export default function App() {
         <div className="flex flex-col items-center">
           {/* Headline */}
           <div className={`relative flex flex-col items-center w-full ${isVietnamese ? "gap-6" : "gap-4"}`}>
-            <motion.h1
-              initial={{ y: 16, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.35, ease: "easeOut", delay: 0 }}
-              className="font-['Anybody',sans-serif] font-black tracking-tighter text-6xl md:text-9xl"
-              style={{
-                fontFamily: headingFontFamily,
-                transform: `scale(${heroScale})`,
-                transformOrigin: "center"
-              }}
-            >
-              {t("hero_generate")}
-            </motion.h1>
+            <div style={{ transform: `scale(${heroScale})`, transformOrigin: "center" }}>
+              <motion.h1
+                initial={{ y: 16, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.35, ease: "easeOut", delay: 0 }}
+                className="font-['Anybody',sans-serif] font-black tracking-tighter text-6xl md:text-9xl"
+                style={{ fontFamily: headingFontFamily }}
+              >
+                {t("hero_generate")}
+              </motion.h1>
+            </div>
 
             <WordRotator t={t} headingFontFamily={headingFontFamily} heroScale={heroScale} />
 
-            <motion.h1
-              initial={{ y: 16, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.35, ease: "easeOut", delay: 0.16 }}
-              className="font-['Anybody',sans-serif] font-black tracking-tighter text-6xl md:text-9xl"
-              style={{
-                fontFamily: headingFontFamily,
-                transform: `scale(${heroScale})`,
-                transformOrigin: "center"
-              }}
-            >
-              {t("hero_instantly")}
-            </motion.h1>
+            <div style={{ transform: `scale(${heroScale})`, transformOrigin: "center" }}>
+              <motion.h1
+                initial={{ y: 16, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.35, ease: "easeOut", delay: 0.16 }}
+                className="font-['Anybody',sans-serif] font-black tracking-tighter text-6xl md:text-9xl"
+                style={{ fontFamily: headingFontFamily }}
+              >
+                {t("hero_instantly")}
+              </motion.h1>
+            </div>
           </div>
 
           <motion.p
