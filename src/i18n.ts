@@ -16,9 +16,8 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     examples_title: "EXAMPLES",
     additional_features_title: "Additional Features",
     additional_features_body:
-      "Looking for something else? We're constantly expanding our subject library. Modules for {history}, {geography}, and {economics} are currently in {early_access}.",
-    additional_features_note:
-      "Discuss custom integrations or request additional features for your institution through our contact form below.",
+      "Looking for something else? Discuss custom integrations or request additional features for your institution through our contact form below.",
+    additional_features_note: "",
     how_it_works_title: "HOW IT WORKS",
     step_import: "Import",
     step_generate: "Generate",
@@ -129,9 +128,8 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     examples_title: "範例",
     additional_features_title: "更多功能",
     additional_features_body:
-      "還在找其他科目嗎？我們正在持續擴充科目庫。目前 {history}、{geography} 與 {economics} 模組處於 {early_access}。",
-    additional_features_note:
-      "歡迎透過下方聯絡表單討論客製整合或提出更多功能需求。",
+      "還在找其他內容嗎？請透過下方聯絡表單與我們討論客製整合，或為您的機構提出更多功能需求。",
+    additional_features_note: "",
     how_it_works_title: "運作方式",
     step_import: "匯入",
     step_generate: "生成",
@@ -237,9 +235,8 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     examples_title: "示例",
     additional_features_title: "更多功能",
     additional_features_body:
-      "还在找其他科目吗？我们正在持续扩充科目库。目前 {history}、{geography} 与 {economics} 模块处于 {early_access}。",
-    additional_features_note:
-      "欢迎通过下方联系表单讨论定制集成或提出更多功能需求。",
+      "还在找其他内容吗？请通过下方联系表单与我们讨论定制集成，或为您的机构提出更多功能需求。",
+    additional_features_note: "",
     how_it_works_title: "工作原理",
     step_import: "导入",
     step_generate: "生成",
@@ -345,9 +342,8 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     examples_title: "VÍ DỤ",
     additional_features_title: "Tính năng bổ sung",
     additional_features_body:
-      "Bạn đang tìm thêm môn khác? Chúng tôi liên tục mở rộng thư viện môn học. Các mô-đun {history}, {geography} và {economics} hiện đang ở {early_access}.",
-    additional_features_note:
-      "Hãy thảo luận tích hợp tuỳ chỉnh hoặc yêu cầu thêm tính năng cho tổ chức của bạn qua biểu mẫu bên dưới.",
+      "Bạn đang tìm thêm nội dung khác? Hãy thảo luận tích hợp tuỳ chỉnh hoặc yêu cầu thêm tính năng cho tổ chức của bạn qua biểu mẫu liên hệ bên dưới.",
+    additional_features_note: "",
     how_it_works_title: "CÁCH HOẠT ĐỘNG",
     step_import: "Nhập",
     step_generate: "Tạo",
@@ -457,9 +453,8 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     examples_title: "ПРИМЕРЫ",
     additional_features_title: "Дополнительные возможности",
     additional_features_body:
-      "Ищете что-то ещё? Мы постоянно расширяем библиотеку предметов. Модули по {history}, {geography} и {economics} сейчас в {early_access}.",
-    additional_features_note:
-      "Обсудите индивидуальные интеграции или запросите дополнительные функции через форму ниже.",
+      "Ищете что-то ещё? Обсудите индивидуальные интеграции или запросите дополнительные функции для вашей организации через форму ниже.",
+    additional_features_note: "",
     how_it_works_title: "КАК ЭТО РАБОТАЕТ",
     step_import: "Импорт",
     step_generate: "Генерация",
@@ -569,9 +564,8 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     examples_title: "CONTOH",
     additional_features_title: "Fitur Tambahan",
     additional_features_body:
-      "Mencari yang lain? Kami terus memperluas pustaka mata pelajaran. Modul untuk {history}, {geography}, dan {economics} saat ini dalam {early_access}.",
-    additional_features_note:
-      "Diskusikan integrasi khusus atau ajukan fitur tambahan untuk institusi Anda melalui formulir kontak di bawah.",
+      "Mencari hal lain? Diskusikan integrasi khusus atau ajukan fitur tambahan untuk institusi Anda melalui formulir kontak di bawah.",
+    additional_features_note: "",
     how_it_works_title: "CARA KERJA",
     step_import: "Impor",
     step_generate: "Buat",

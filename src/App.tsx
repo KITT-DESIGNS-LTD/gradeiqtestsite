@@ -781,7 +781,7 @@ export default function App() {
               { id: "chemistry", label: t("subject_chemistry"), icon: <div className="bg-[#a180ee] w-full h-full flex items-center justify-center p-4"><svg viewBox="0 0 58 81" fill="none" className="w-full h-full"><path d={svgPaths.p3fdc9380} fill="white"/><path d={svgPaths.p18f8e180} fill="white"/><path d={svgPaths.p1c26c6f0} fill="white"/><path d={svgPaths.p3ff11370} fill="white"/><path d={svgPaths.p3a671680} fill="white"/></svg></div> },
               { id: "physics", label: t("subject_physics"), icon: <div className="bg-[#F6DA6F] w-full h-full flex items-center justify-center p-3"><svg viewBox="0 0 98 98" fill="none" className="w-full h-full"><path d={svgPaths.p25aa0ff0} fill="white"/></svg></div> },
               { id: "biology", label: t("subject_biology"), icon: <div className="bg-[#a7d9b4] w-full h-full flex items-center justify-center p-4"><svg viewBox="0 0 58 71" fill="none" className="w-full h-full"><path d={svgPaths.p20ea880} fill="white"/></svg></div> },
-              { id: "computer_science", label: t("subject_compsci"), icon: <div className="bg-[#19191b] w-full h-full flex items-center justify-center p-3"><svg viewBox="0 0 98 98" fill="none" className="w-full h-full"><rect fill="black" height="98" rx="20" width="98"/><path d={svgPaths.p7a73700} fill="white"/><path d={svgPaths.p165f700} fill="white"/><path d={svgPaths.p1f736500} fill="white"/></svg></div> }
+              { id: "computer_science", label: t("subject_compsci"), icon: <div className="bg-[#19191b] w-full h-full flex items-center justify-center p-3"><svg viewBox="0 0 98 98" fill="none" className="w-full h-full"><rect fill="#19191b" height="98" rx="20" width="98"/><path d={svgPaths.p7a73700} fill="white"/><path d={svgPaths.p165f700} fill="white"/><path d={svgPaths.p1f736500} fill="white"/></svg></div> }
             ];
             
             return subjects.map((subject, i) => (
@@ -814,15 +814,7 @@ export default function App() {
               {t("additional_features_title")}
             </h3>
             <p className="font-['Prompt',sans-serif] text-xl opacity-70 leading-relaxed">
-              {t("additional_features_body", {
-                history: t("history"),
-                geography: t("geography"),
-                economics: t("economics"),
-                early_access: t("early_access")
-              })}
-            </p>
-            <p className="font-['Prompt',sans-serif] text-lg opacity-40 mt-4">
-              {t("additional_features_note")}
+              {t("additional_features_body")}
             </p>
           </div>
         </motion.div>
