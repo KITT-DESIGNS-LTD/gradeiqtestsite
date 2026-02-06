@@ -22,7 +22,7 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     step_import: "Import",
     step_generate: "Generate",
     step_export: "Export",
-    step_desc_import: "Simply upload PDF files of previous exams into the source folder",
+    step_desc_import: "Simply upload PDF files of previous exams and homework into the source folder",
     step_desc_generate: "AI identifies key topics and generates fresh, relevant questions.",
     step_desc_export:
       "Download your new, fully curated exam with a comprehensive marking scheme instantly.",
@@ -51,11 +51,18 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     math_option_d: "D. 9",
     math_desc:
       "Grade IQ generates precise computational checks and auto grades numeric answers with accuracy.",
-    english_question: "Fill in the blank. She ______ to the store yesterday.",
+    english_question: "Fill in the blank.",
+    english_blank_prefix: "She",
+    english_blank_suffix: "to the store yesterday.",
+    english_option_a: "went",
+    english_option_b: "goes",
+    english_option_c: "going",
     english_desc:
       "Grade IQ builds grammar focused exercises and marks language structure instantly.",
     chemistry_question: "State how a covalent bond forms.",
     chemistry_answer:
+      "Covalent bonds form when atoms share electrons to reach stable configurations.",
+    chemistry_typing:
       "Covalent bonds form when atoms share electrons to reach stable configurations.",
     chemistry_desc:
       "Grade IQ reviews short answer chemistry responses by matching key ideas and terms to ensure the core concept is truly understood.",
@@ -134,7 +141,7 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     step_import: "匯入",
     step_generate: "生成",
     step_export: "匯出",
-    step_desc_import: "只需將過去考試的 PDF 檔上傳到來源資料夾。",
+    step_desc_import: "只需將過去考試和作業的 PDF 檔上傳到來源資料夾。",
     step_desc_generate: "AI 會辨識重點主題並產生全新的相關題目。",
     step_desc_export: "立即下載全新的完整試卷與詳盡的評分標準。",
     contact_title: "聯絡我們",
@@ -161,10 +168,17 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     math_option_c: "C. x³",
     math_option_d: "D. 9",
     math_desc: "Grade IQ 會精準檢核計算並自動批改數值答案。",
-    english_question: "填空：她昨天 ______ 去商店。",
+    english_question: "Fill in the blank.",
+    english_blank_prefix: "She",
+    english_blank_suffix: "to the store yesterday.",
+    english_option_a: "went",
+    english_option_b: "goes",
+    english_option_c: "going",
     english_desc: "Grade IQ 建立以語法為主的練習並即時批改語言結構。",
     chemistry_question: "說明共價鍵如何形成。",
     chemistry_answer: "當原子共享電子以達到穩定組態時，共價鍵形成。",
+    chemistry_typing:
+      "Covalent bonds form when atoms share electrons to reach stable configurations.",
     chemistry_desc:
       "Grade IQ 透過比對關鍵概念與術語來評閱化學簡答題，確保核心概念真正被理解。",
     physics_question: "說明當兩個物體碰撞並一起移動時，動量守恆如何適用。",
@@ -241,7 +255,7 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     step_import: "导入",
     step_generate: "生成",
     step_export: "导出",
-    step_desc_import: "只需将过往考试的 PDF 文件上传到源文件夹。",
+    step_desc_import: "只需将过往考试和作业的 PDF 文件上传到源文件夹。",
     step_desc_generate: "AI 会识别重点主题并生成全新的相关题目。",
     step_desc_export: "立即下载全新的完整试卷与详细评分标准。",
     contact_title: "联系我们",
@@ -268,10 +282,17 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     math_option_c: "C. x³",
     math_option_d: "D. 9",
     math_desc: "Grade IQ 可精准检核计算并自动批改数值答案。",
-    english_question: "填空：她昨天 ______ 去商店。",
+    english_question: "Fill in the blank.",
+    english_blank_prefix: "She",
+    english_blank_suffix: "to the store yesterday.",
+    english_option_a: "went",
+    english_option_b: "goes",
+    english_option_c: "going",
     english_desc: "Grade IQ 构建以语法为主的练习并即时批改语言结构。",
     chemistry_question: "说明共价键如何形成。",
     chemistry_answer: "当原子共享电子以达到稳定构型时，共价键形成。",
+    chemistry_typing:
+      "Covalent bonds form when atoms share electrons to reach stable configurations.",
     chemistry_desc:
       "Grade IQ 通过匹配关键概念与术语来评阅化学简答题，确保核心概念真正被理解。",
     physics_question: "说明当两个物体碰撞并一起运动时，动量守恒如何适用。",
@@ -348,7 +369,7 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     step_import: "Nhập",
     step_generate: "Tạo",
     step_export: "Xuất",
-    step_desc_import: "Chỉ cần tải lên các tệp PDF của đề thi trước vào thư mục nguồn.",
+    step_desc_import: "Chỉ cần tải lên các tệp PDF của đề thi và bài tập trước vào thư mục nguồn.",
     step_desc_generate: "AI xác định chủ đề chính và tạo câu hỏi mới phù hợp.",
     step_desc_export: "Tải ngay đề thi hoàn chỉnh kèm thang điểm chi tiết.",
     contact_title: "Liên hệ",
@@ -376,12 +397,19 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     math_option_d: "D. 9",
     math_desc:
       "Grade IQ kiểm tra tính toán chính xác và tự động chấm đáp án số.",
-    english_question: "Điền vào chỗ trống. Cô ấy ______ đến cửa hàng hôm qua.",
+    english_question: "Fill in the blank.",
+    english_blank_prefix: "She",
+    english_blank_suffix: "to the store yesterday.",
+    english_option_a: "went",
+    english_option_b: "goes",
+    english_option_c: "going",
     english_desc:
       "Grade IQ tạo bài tập ngữ pháp và chấm cấu trúc ngôn ngữ ngay lập tức.",
     chemistry_question: "Nêu cách liên kết cộng hoá trị hình thành.",
     chemistry_answer:
       "Liên kết cộng hoá trị hình thành khi các nguyên tử chia sẻ electron để đạt cấu hình bền vững.",
+    chemistry_typing:
+      "Covalent bonds form when atoms share electrons to reach stable configurations.",
     chemistry_desc:
       "Grade IQ chấm câu trả lời hoá học ngắn bằng cách đối chiếu các ý và thuật ngữ chính.",
     physics_question:
@@ -459,7 +487,7 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     step_import: "Импорт",
     step_generate: "Генерация",
     step_export: "Экспорт",
-    step_desc_import: "Просто загрузите PDF прошлых экзаменов в исходную папку.",
+    step_desc_import: "Просто загрузите PDF прошлых экзаменов и домашних заданий в исходную папку.",
     step_desc_generate: "ИИ определяет ключевые темы и генерирует новые релевантные вопросы.",
     step_desc_export: "Скачайте готовый экзамен с полной схемой оценивания.",
     contact_title: "Связаться с нами",
@@ -487,12 +515,19 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     math_option_d: "D. 9",
     math_desc:
       "Grade IQ точно проверяет вычисления и автоматически оценивает числовые ответы.",
-    english_question: "Заполните пропуск. Она ______ в магазин вчера.",
+    english_question: "Fill in the blank.",
+    english_blank_prefix: "She",
+    english_blank_suffix: "to the store yesterday.",
+    english_option_a: "went",
+    english_option_b: "goes",
+    english_option_c: "going",
     english_desc:
       "Grade IQ создаёт упражнения по грамматике и мгновенно оценивает структуру языка.",
     chemistry_question: "Объясните, как образуется ковалентная связь.",
     chemistry_answer:
       "Ковалентные связи образуются, когда атомы делятся электронами для достижения стабильной конфигурации.",
+    chemistry_typing:
+      "Covalent bonds form when atoms share electrons to reach stable configurations.",
     chemistry_desc:
       "Grade IQ проверяет короткие ответы по химии, сопоставляя ключевые идеи и термины.",
     physics_question:
@@ -570,7 +605,7 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     step_import: "Impor",
     step_generate: "Buat",
     step_export: "Ekspor",
-    step_desc_import: "Cukup unggah file PDF ujian sebelumnya ke folder sumber.",
+    step_desc_import: "Cukup unggah file PDF ujian dan tugas sebelumnya ke folder sumber.",
     step_desc_generate: "AI mengidentifikasi topik kunci dan membuat pertanyaan baru yang relevan.",
     step_desc_export: "Unduh ujian baru lengkap dengan skema penilaian secara instan.",
     contact_title: "Hubungi Kami",
@@ -598,11 +633,18 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     math_option_d: "D. 9",
     math_desc:
       "Grade IQ memeriksa perhitungan dengan presisi dan menilai jawaban numerik secara otomatis.",
-    english_question: "Isi bagian kosong. Dia ______ ke toko kemarin.",
+    english_question: "Fill in the blank.",
+    english_blank_prefix: "She",
+    english_blank_suffix: "to the store yesterday.",
+    english_option_a: "went",
+    english_option_b: "goes",
+    english_option_c: "going",
     english_desc: "Grade IQ membuat latihan tata bahasa dan menilai struktur bahasa secara instan.",
     chemistry_question: "Jelaskan bagaimana ikatan kovalen terbentuk.",
     chemistry_answer:
       "Ikatan kovalen terbentuk ketika atom berbagi elektron untuk mencapai konfigurasi stabil.",
+    chemistry_typing:
+      "Covalent bonds form when atoms share electrons to reach stable configurations.",
     chemistry_desc:
       "Grade IQ menilai jawaban singkat kimia dengan mencocokkan ide dan istilah kunci agar konsep inti benar-benar dipahami.",
     physics_question:

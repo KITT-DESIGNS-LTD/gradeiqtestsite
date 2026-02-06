@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring, AnimatePresence, useInView } from 'motion/react';
 import { Plus, ArrowRight } from 'lucide-react';
 import { Input } from "./components/ui/input";
@@ -282,7 +282,8 @@ const SolutionRow = ({
   delay,
   isOpen,
   onToggle,
-  t
+  t,
+  language
 }: {
   icon: any;
   id: string;
@@ -292,9 +293,149 @@ const SolutionRow = ({
   isOpen: boolean;
   onToggle: () => void;
   t: (key: string, vars?: Record<string, string | number>) => string;
+  language: LanguageCode;
 }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.3 });
+  const term1Ref = useRef<HTMLDivElement>(null);
+  const term2Ref = useRef<HTMLDivElement>(null);
+  const term3Ref = useRef<HTMLDivElement>(null);
+  const def1Ref = useRef<HTMLDivElement>(null);
+  const def2Ref = useRef<HTMLDivElement>(null);
+  const def3Ref = useRef<HTMLDivElement>(null);
+  const linesSvgRef = useRef<SVGSVGElement>(null);
+  const [linePoints, setLinePoints] = useState<{
+    t1?: { x1: number; y1: number; x2: number; y2: number };
+    t2?: { x1: number; y1: number; x2: number; y2: number };
+    t3?: { x1: number; y1: number; x2: number; y2: number };
+  }>({});
+  const [chemistryTyped, setChemistryTyped] = useState("");
+  const chemistryTimer = useRef<number | null>(null);
+  const [mathSwipeKey, setMathSwipeKey] = useState(0);
+  const [englishTyped, setEnglishTyped] = useState("");
+  const englishTimer = useRef<number | null>(null);
+  const [englishSelectKey, setEnglishSelectKey] = useState(0);
+  const [csSelectKey, setCsSelectKey] = useState(0);
+
+  useLayoutEffect(() => {
+    if (id !== "biology") return;
+
+    const updateLines = () => {
+      const svg = linesSvgRef.current;
+      if (!svg) return;
+      const svgRect = svg.getBoundingClientRect();
+      const center = (el: HTMLDivElement | null) => {
+        if (!el) return null;
+        const r = el.getBoundingClientRect();
+        return {
+          x: r.left - svgRect.left + r.width / 2,
+          y: r.top - svgRect.top + r.height / 2
+        };
+      };
+
+      const t1 = center(term1Ref.current);
+      const t2 = center(term2Ref.current);
+      const t3 = center(term3Ref.current);
+      const d1 = center(def1Ref.current);
+      const d2 = center(def2Ref.current);
+      const d3 = center(def3Ref.current);
+
+      if (t1 && t2 && t3 && d1 && d2 && d3) {
+        setLinePoints({
+          t1: { x1: t1.x, y1: t1.y, x2: d3.x, y2: d3.y },
+          t2: { x1: t2.x, y1: t2.y, x2: d1.x, y2: d1.y },
+          t3: { x1: t3.x, y1: t3.y, x2: d2.x, y2: d2.y }
+        });
+      }
+    };
+
+    updateLines();
+    window.addEventListener("resize", updateLines);
+    return () => window.removeEventListener("resize", updateLines);
+  }, [id, isOpen, language]);
+
+  useEffect(() => {
+    if (id !== "chemistry") return;
+    if (!isOpen) {
+      setChemistryTyped("");
+      return;
+    }
+
+    const fullText = t("chemistry_answer");
+    let index = 0;
+    setChemistryTyped("");
+
+    const perCharDelay =
+      language === "zh-Hant" || language === "zh-Hans" ? 45 : 18;
+
+    const typeNext = () => {
+      index += 1;
+      setChemistryTyped(fullText.slice(0, index));
+      if (index < fullText.length) {
+        chemistryTimer.current = window.setTimeout(typeNext, perCharDelay);
+      }
+    };
+
+    chemistryTimer.current = window.setTimeout(typeNext, 120);
+
+    return () => {
+      if (chemistryTimer.current) {
+        window.clearTimeout(chemistryTimer.current);
+        chemistryTimer.current = null;
+      }
+    };
+  }, [id, isOpen, language, t]);
+
+  useEffect(() => {
+    if (id !== "english") return;
+    if (!isOpen) {
+      setEnglishTyped("");
+      return;
+    }
+
+    if (englishTimer.current) {
+      window.clearTimeout(englishTimer.current);
+      englishTimer.current = null;
+    }
+
+    setEnglishSelectKey((prev) => prev + 1);
+
+    const fullText = t("english_option_a");
+    let index = 0;
+    setEnglishTyped("");
+
+    const typeNext = () => {
+      index += 1;
+      setEnglishTyped(fullText.slice(0, index));
+      if (index < fullText.length) {
+        englishTimer.current = window.setTimeout(typeNext, 70);
+      }
+    };
+
+    englishTimer.current = window.setTimeout(typeNext, 120);
+
+    return () => {
+      if (englishTimer.current) {
+        window.clearTimeout(englishTimer.current);
+        englishTimer.current = null;
+      }
+    };
+  }, [id, isOpen, language, t]);
+
+  useEffect(() => {
+    if (id !== "mathematics") return;
+    if (isOpen) {
+      setMathSwipeKey((prev) => prev + 1);
+    }
+  }, [id, isOpen]);
+
+  useEffect(() => {
+    if (id !== "computer_science") return;
+    if (isOpen) {
+      setCsSelectKey((prev) => prev + 1);
+    }
+  }, [id, isOpen]);
+
 
   const getExampleContent = () => {
     switch (id) {
@@ -305,7 +446,26 @@ const SolutionRow = ({
               <p className="text-black mb-4">{t("math_question")}</p>
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="p-3 bg-gray-50 rounded-lg">{t("math_option_a")}</div>
-                <div className="p-3 bg-black text-white rounded-lg">{t("math_option_b")}</div>
+                <motion.div
+                  key={mathSwipeKey}
+                  className="relative p-3 rounded-lg overflow-hidden bg-[#F9FAFB] text-black"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-[#7C5DED]"
+                    style={{ originX: 0 }}
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.45, ease: "easeOut" }}
+                  />
+                  <motion.span
+                    className="relative z-10"
+                    initial={{ color: "#111827" }}
+                    animate={{ color: "#FFFFFF" }}
+                    transition={{ duration: 0.25, ease: "easeOut", delay: 0.2 }}
+                  >
+                    {t("math_option_b")}
+                  </motion.span>
+                </motion.div>
                 <div className="p-3 bg-gray-50 rounded-lg">{t("math_option_c")}</div>
                 <div className="p-3 bg-gray-50 rounded-lg">{t("math_option_d")}</div>
               </div>
@@ -318,7 +478,48 @@ const SolutionRow = ({
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
               <p className="text-black mb-4">{t("english_question")}</p>
-              <div className="h-10 border-b-2 border-dashed border-black/20 w-32 mb-2" />
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-black">{t("english_blank_prefix")}</span>
+                <div
+                  className="rounded-md shrink-0 inline-flex items-center justify-center px-2 text-sm font-medium text-black leading-none align-middle"
+                  style={{
+                    width: "176px",
+                    height: "28px",
+                    lineHeight: "28px",
+                    textAlign: "center",
+                    backgroundColor: "#E5E7EB",
+                    border: "1px solid rgba(0,0,0,0.25)"
+                  }}
+                  aria-hidden="true"
+                >
+                  {englishTyped || "\u00A0"}
+                </div>
+                <span className="text-black">{t("english_blank_suffix")}</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <motion.div
+                  key={englishSelectKey}
+                  className="relative px-4 py-2 rounded-lg text-sm font-medium border border-black/5 overflow-hidden bg-[#F9FAFB] text-black"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-[#7C5DED]"
+                    style={{ originX: 0 }}
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.45, ease: "easeOut" }}
+                  />
+                  <motion.span
+                    className="relative z-10"
+                    initial={{ color: "#111827" }}
+                    animate={{ color: "#FFFFFF" }}
+                    transition={{ duration: 0.25, ease: "easeOut", delay: 0.2 }}
+                  >
+                    {t("english_option_a")}
+                  </motion.span>
+                </motion.div>
+                <div className="px-4 py-2 bg-gray-50 rounded-lg text-sm font-medium border border-black/5">{t("english_option_b")}</div>
+                <div className="px-4 py-2 bg-gray-50 rounded-lg text-sm font-medium border border-black/5">{t("english_option_c")}</div>
+              </div>
             </div>
             <p className="text-sm font-medium text-black/40 italic">{t("english_desc")}</p>
           </div>
@@ -328,8 +529,17 @@ const SolutionRow = ({
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
               <p className="text-black mb-2">{t("chemistry_question")}</p>
-              <p className="text-black text-lg py-2" style={{ fontFamily: '"Comic Sans MS", "Marker Felt", cursive' }}>
-                {t("chemistry_answer")}
+              <p
+                className="text-black text-lg py-2 min-h-[28px]"
+                style={{
+                  fontFamily:
+                    language === "vi"
+                      ? '"Be Vietnam Pro", "Prompt", sans-serif'
+                      : '"Comic Sans MS", "Marker Felt", cursive',
+                  fontWeight: language === "vi" ? 400 : undefined
+                }}
+              >
+                {chemistryTyped}
               </p>
               <div className="h-px bg-black/10 w-full mt-1" />
             </div>
@@ -342,9 +552,24 @@ const SolutionRow = ({
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
               <p className="text-black mb-4">{t("physics_question")}</p>
               <div className="space-y-2">
-                <div className="h-4 bg-gray-100 rounded w-full" />
-                <div className="h-4 bg-gray-100 rounded w-5/6" />
-                <div className="h-4 bg-gray-100 rounded w-4/6" />
+                <motion.div
+                  className="h-4 bg-gray-100 rounded w-full origin-left"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: isOpen ? 1 : 0 }}
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                />
+                <motion.div
+                  className="h-4 bg-gray-100 rounded w-5/6 origin-left"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: isOpen ? 1 : 0 }}
+                  transition={{ duration: 0.32, ease: "easeOut", delay: 0.08 }}
+                />
+                <motion.div
+                  className="h-4 bg-gray-100 rounded w-4/6 origin-left"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: isOpen ? 1 : 0 }}
+                  transition={{ duration: 0.3, ease: "easeOut", delay: 0.16 }}
+                />
               </div>
             </div>
             <p className="text-sm font-medium text-black/40 italic">{t("physics_desc")}</p>
@@ -360,46 +585,88 @@ const SolutionRow = ({
                 <div className="space-y-6 z-10 flex flex-col justify-between">
                   <div className="flex items-center gap-3 group">
                     <div className="px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium border border-black/5 w-40 text-center">{t("biology_term1")}</div>
-                    <div className="size-2 rounded-full bg-black/20 group-hover:bg-[#7C5DED] transition-colors" id="term-1" />
+                    <div ref={term1Ref} className="size-2 rounded-full bg-[#7C5DED]" id="term-1" />
                   </div>
                   <div className="flex items-center gap-3 group">
                     <div className="px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium border border-black/5 w-40 text-center">{t("biology_term2")}</div>
-                    <div className="size-2 rounded-full bg-black/20 group-hover:bg-[#7C5DED] transition-colors" id="term-2" />
+                    <div ref={term2Ref} className="size-2 rounded-full bg-[#7C5DED]" id="term-2" />
                   </div>
                   <div className="flex items-center gap-3 group">
                     <div className="px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium border border-black/5 w-40 text-center">{t("biology_term3")}</div>
-                    <div className="size-2 rounded-full bg-black/20 group-hover:bg-[#7C5DED] transition-colors" id="term-3" />
+                    <div ref={term3Ref} className="size-2 rounded-full bg-[#7C5DED]" id="term-3" />
                   </div>
                 </div>
                 
                 {/* SVG Connections */}
-                <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible" style={{ zIndex: 0 }}>
+                <svg ref={linesSvgRef} className="absolute inset-0 w-full h-full pointer-events-none overflow-visible" style={{ zIndex: 0 }}>
                   <defs>
                     <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                       <stop offset="0%" stopColor="#7C5DED" stopOpacity="0.2" />
                       <stop offset="100%" stopColor="#7C5DED" stopOpacity="0.5" />
                     </linearGradient>
                   </defs>
-                  {/* Cell Membrane (Top Left) -> enters/leaves (Bottom Right) */}
-                  <path d="M 175 20 C 180 90, 270 158, 308 198" stroke="url(#lineGrad)" strokeWidth="2" fill="none" strokeDasharray="4 4" />
-                  {/* Mitochondria (Mid Left) -> energy (Top Right) */}
-                  <path d="M 172 111 C 220 111, 280 44, 308 20" stroke="url(#lineGrad)" strokeWidth="2" fill="none" strokeDasharray="4 4" />
-                  {/* Ribosome (Bottom Left) -> proteins (Mid Right) */}
-                  <path d="M 172 198 C 220 198, 280 111, 308 111" stroke="url(#lineGrad)" strokeWidth="2" fill="none" strokeDasharray="4 4" />
+                  {/* Cell membrane -> controls what enters/leaves */}
+                  {linePoints.t1 && (
+                    <motion.line
+                      x1={linePoints.t1.x1}
+                      y1={linePoints.t1.y1}
+                      x2={linePoints.t1.x2}
+                      y2={linePoints.t1.y2}
+                      stroke="url(#lineGrad)"
+                      strokeWidth="2"
+                      strokeDasharray="4 4"
+                      pathLength={1}
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: isOpen ? 1 : 0 }}
+                      transition={{ duration: 0.6, ease: "easeOut" }}
+                    />
+                  )}
+                  {/* Mitochondria -> produces cellular energy */}
+                  {linePoints.t2 && (
+                    <motion.line
+                      x1={linePoints.t2.x1}
+                      y1={linePoints.t2.y1}
+                      x2={linePoints.t2.x2}
+                      y2={linePoints.t2.y2}
+                      stroke="url(#lineGrad)"
+                      strokeWidth="2"
+                      strokeDasharray="4 4"
+                      pathLength={1}
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: isOpen ? 1 : 0 }}
+                      transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+                    />
+                  )}
+                  {/* Ribosome -> builds proteins */}
+                  {linePoints.t3 && (
+                    <motion.line
+                      x1={linePoints.t3.x1}
+                      y1={linePoints.t3.y1}
+                      x2={linePoints.t3.x2}
+                      y2={linePoints.t3.y2}
+                      stroke="url(#lineGrad)"
+                      strokeWidth="2"
+                      strokeDasharray="4 4"
+                      pathLength={1}
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: isOpen ? 1 : 0 }}
+                      transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+                    />
+                  )}
                 </svg>
 
                 {/* Right Side: Definitions */}
                 <div className="space-y-6 z-10 flex flex-col justify-between items-end">
                   <div className="flex items-center gap-3 group">
-                    <div className="size-2 rounded-full bg-black/20 group-hover:bg-[#7C5DED] transition-colors" id="def-1" />
+                    <div ref={def1Ref} className="size-2 rounded-full bg-[#7C5DED]" id="def-1" />
                     <div className="px-4 py-3 bg-gray-50 rounded-xl text-xs font-medium border border-black/5 w-48">{t("biology_def1")}</div>
                   </div>
                   <div className="flex items-center gap-3 group">
-                    <div className="size-2 rounded-full bg-black/20 group-hover:bg-[#7C5DED] transition-colors" id="def-2" />
+                    <div ref={def2Ref} className="size-2 rounded-full bg-[#7C5DED]" id="def-2" />
                     <div className="px-4 py-3 bg-gray-50 rounded-xl text-xs font-medium border border-black/5 w-48">{t("biology_def2")}</div>
                   </div>
                   <div className="flex items-center gap-3 group">
-                    <div className="size-2 rounded-full bg-black/20 group-hover:bg-[#7C5DED] transition-colors" id="def-3" />
+                    <div ref={def3Ref} className="size-2 rounded-full bg-[#7C5DED]" id="def-3" />
                     <div className="px-4 py-3 bg-gray-50 rounded-xl text-xs font-medium border border-black/5 w-48">{t("biology_def3")}</div>
                   </div>
                 </div>
@@ -414,7 +681,26 @@ const SolutionRow = ({
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
               <p className="text-black mb-4">{t("cs_question")}</p>
               <div className="flex gap-4">
-                <div className="px-6 py-2 bg-black text-white rounded-full text-sm font-bold">{t("cs_true")}</div>
+                <motion.div
+                  key={csSelectKey}
+                  className="relative px-6 py-2 rounded-full text-sm font-bold bg-gray-100 text-black overflow-hidden"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-[#7C5DED]"
+                    style={{ originX: 0 }}
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                  />
+                  <motion.span
+                    className="relative z-10"
+                    initial={{ color: "#111827" }}
+                    animate={{ color: "#FFFFFF" }}
+                    transition={{ duration: 0.2, ease: "easeOut", delay: 0.15 }}
+                  >
+                    {t("cs_true")}
+                  </motion.span>
+                </motion.div>
                 <div className="px-6 py-2 bg-gray-100 text-black rounded-full text-sm font-bold">{t("cs_false")}</div>
               </div>
             </div>
@@ -795,6 +1081,7 @@ export default function App() {
                 isOpen={openIndex === i}
                 onToggle={() => setOpenIndex(openIndex === i ? null : i)}
                 t={t}
+                language={language}
               />
             ));
           })()}
