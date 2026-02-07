@@ -123,8 +123,8 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
   "zh-Hant": {
     nav_product: "產品",
     nav_contact: "聯絡",
-    nav_demo: "示範",
-    hero_generate: "生成",
+    nav_demo: "立即生成",
+    hero_generate: "立即生成",
     hero_instantly: "立即",
     hero_tagline:
       "製作與批改作業和考試非常耗時。我們把歷屆試卷轉化為新的考題並附答案，只需幾分鐘。",
@@ -132,6 +132,7 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     word_past_papers: "歷屆試卷",
     word_homework: "作業",
     word_assignments: "指定作業",
+    word_answers: "答案",
     examples_title: "範例",
     additional_features_title: "更多功能",
     additional_features_body:
@@ -237,15 +238,16 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
   "zh-Hans": {
     nav_product: "产品",
     nav_contact: "联系",
-    nav_demo: "演示",
-    hero_generate: "生成",
+    nav_demo: "立即生成",
+    hero_generate: "立即生成",
     hero_instantly: "立即",
     hero_tagline:
       "制作与批改作业和考试非常耗时。我们把历届试卷转化为新的试题并附答案，只需几分钟。",
     hero_contact_sales: "联系销售",
-    word_past_papers: "历届试卷",
+    word_past_papers: "考试试卷",
     word_homework: "作业",
-    word_assignments: "指定作业",
+    word_assignments: "作业",
+    word_answers: "答案",
     examples_title: "示例",
     additional_features_title: "更多功能",
     additional_features_body:

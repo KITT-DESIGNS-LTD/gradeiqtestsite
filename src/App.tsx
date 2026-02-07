@@ -230,6 +230,7 @@ const Navbar = ({
           </div>
         </div>
       </div>
+
     </motion.nav>
   );
 };
@@ -784,13 +785,16 @@ import { GenerateVisualization } from "./components/GenerateVisualization";
 const WordRotator = ({
   t,
   headingFontFamily,
-  heroScale
+  heroScale,
+  language
 }: {
   t: (key: string, vars?: Record<string, string | number>) => string;
   headingFontFamily: string;
   heroScale: number;
+  language: string;
 }) => {
-  const words = [t("word_past_papers"), t("word_homework"), t("word_assignments")];
+  const baseWords = [t("word_past_papers"), t("word_homework"), t("word_assignments")];
+  const words = language.startsWith("zh") ? [...baseWords, t("word_answers")] : baseWords;
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -989,19 +993,21 @@ export default function App() {
               </motion.h1>
             </div>
 
-            <WordRotator t={t} headingFontFamily={headingFontFamily} heroScale={heroScale} />
+            <WordRotator t={t} headingFontFamily={headingFontFamily} heroScale={heroScale} language={language} />
 
-            <div style={{ transform: `scale(${heroScale})`, transformOrigin: "center" }}>
-              <motion.h1
-                initial={{ y: 16, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.35, ease: "easeOut", delay: 0.16 }}
-                className="font-['Anybody',sans-serif] font-black tracking-tighter text-6xl md:text-9xl"
-                style={{ fontFamily: headingFontFamily }}
-              >
-                {t("hero_instantly")}
-              </motion.h1>
-            </div>
+            {!language.startsWith("zh") && (
+              <div style={{ transform: `scale(${heroScale})`, transformOrigin: "center" }}>
+                <motion.h1
+                  initial={{ y: 16, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.35, ease: "easeOut", delay: 0.16 }}
+                  className="font-['Anybody',sans-serif] font-black tracking-tighter text-6xl md:text-9xl"
+                  style={{ fontFamily: headingFontFamily }}
+                >
+                  {t("hero_instantly")}
+                </motion.h1>
+              </div>
+            )}
           </div>
 
           <motion.p
