@@ -13,6 +13,8 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     word_past_papers: "PAST PAPERS",
     word_homework: "HOMEWORK",
     word_assignments: "ASSIGNMENTS",
+    word_exams: "EXAMS",
+    word_answers: "ANSWERS",
     examples_title: "EXAMPLES",
     additional_features_title: "Additional Features",
     additional_features_body:
@@ -132,6 +134,7 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     word_past_papers: "歷屆試卷",
     word_homework: "作業",
     word_assignments: "指定作業",
+    word_exams: "考試",
     word_answers: "答案",
     examples_title: "範例",
     additional_features_title: "更多功能",
@@ -247,6 +250,7 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     word_past_papers: "考试试卷",
     word_homework: "作业",
     word_assignments: "作业",
+    word_exams: "考试",
     word_answers: "答案",
     examples_title: "示例",
     additional_features_title: "更多功能",
@@ -362,6 +366,8 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     word_past_papers: "ĐÊ CŨ",
     word_homework: "BÀI TẬP",
     word_assignments: "BÀI GIAO",
+    word_exams: "BÀI THI",
+    word_answers: "ĐÁP ÁN",
     examples_title: "VÍ DỤ",
     additional_features_title: "Tính năng bổ sung",
     additional_features_body:
@@ -480,6 +486,8 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     word_past_papers: "ПРОШЛЫЕ",
     word_homework: "ДОМАШКА",
     word_assignments: "РАБОТЫ",
+    word_exams: "ЭКЗАМЕНЫ",
+    word_answers: "ОТВЕТЫ",
     examples_title: "ПРИМЕРЫ",
     additional_features_title: "Дополнительные возможности",
     additional_features_body:
@@ -598,6 +606,8 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     word_past_papers: "ARSIP SOAL",
     word_homework: "PR",
     word_assignments: "TUGAS",
+    word_exams: "UJIAN",
+    word_answers: "JAWABAN",
     examples_title: "CONTOH",
     additional_features_title: "Fitur Tambahan",
     additional_features_body:

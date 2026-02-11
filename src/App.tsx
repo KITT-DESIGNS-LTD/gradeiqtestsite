@@ -793,8 +793,12 @@ const WordRotator = ({
   heroScale: number;
   language: string;
 }) => {
-  const baseWords = [t("word_past_papers"), t("word_homework"), t("word_assignments")];
-  const words = language.startsWith("zh") ? [...baseWords, t("word_answers")] : baseWords;
+  const words = [
+    t("word_homework"),
+    t("word_assignments"),
+    t("word_exams"),
+    t("word_answers")
+  ];
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
