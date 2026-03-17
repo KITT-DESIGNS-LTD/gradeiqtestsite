@@ -1012,8 +1012,8 @@ export default function App() {
     offset: ["start end", "end start"]
   });
 
-  const featuresOpacity = useTransform(featuresProgress, [0.1, 0.3, 0.7, 0.95], [0, 1, 1, 0]);
-  const featuresScale = useTransform(featuresProgress, [0.7, 0.95], [1, 0.95]);
+  const featuresOpacity = useTransform(featuresProgress, [0.1, 0.3, 0.85, 1], [0, 1, 1, 0]);
+  const featuresScale = useTransform(featuresProgress, [0.85, 1], [1, 0.95]);
 
   const steps = [
     { id: "import", label: t("step_import") },
@@ -1128,7 +1128,7 @@ export default function App() {
       </section>
 
       {/* Examples Section */}
-      <section id="solutions" className="py-16 md:py-32 px-4 sm:px-6 md:px-24 max-w-[1440px] mx-auto text-center">
+      <section id="solutions" className="pt-16 pb-8 md:pt-32 md:pb-32 px-4 sm:px-6 md:px-24 max-w-[1440px] mx-auto text-center">
         <motion.h2
           initial={{ y: -10, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
