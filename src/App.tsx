@@ -887,8 +887,8 @@ const WordRotator = ({
         initial={{ x: "-100%" }}
         animate={{ x: "0%" }}
         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-        className="absolute inset-y-0 left-0 flex items-center pointer-events-none w-[50vw]"
-        style={{ marginLeft: "calc(78vw - 1850px)", marginTop: "8px" }}
+        className="absolute inset-y-0 left-0 flex items-center pointer-events-none w-[100vw] md:w-[50vw]"
+        style={{ marginLeft: "calc(max(78vw - 1850px, -90vw))", marginTop: "8px" }}
       >
         <div className="relative h-full w-full flex items-center">
           <svg 
