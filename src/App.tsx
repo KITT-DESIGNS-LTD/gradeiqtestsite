@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring, AnimatePresence, useInView } from 'motion/react';
+import { motion, useScroll, useTransform, useSpring, AnimatePresence, useInView, useMotionValue } from 'motion/react';
 import { Plus, ArrowRight, Menu, X } from 'lucide-react';
 import { Input } from "./components/ui/input";
 import { Textarea } from "./components/ui/textarea";
 import { Label } from "./components/ui/label";
 import { Button } from "./components/ui/button";
+import { useIsMobile } from "./components/ui/use-mobile";
 import svgPaths from "./imports/svg-inxdi7sgrl";
 import imgMacMockup from "figma:asset/92178435c4f4e383b8d3a5e1650bc16d743bb194.png";
 import LogoSvg from "./assets/Vector.svg";
@@ -872,6 +873,9 @@ const WordRotator = ({
     t("word_answers")
   ];
   const [index, setIndex] = useState(0);
+  const measureRef = useRef<HTMLSpanElement>(null);
+  const [textWidth, setTextWidth] = useState(0);
+  const [showPen, setShowPen] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1450);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -880,48 +884,79 @@ const WordRotator = ({
     return () => clearInterval(interval);
   }, [words.length]);
 
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (measureRef.current) {
+        setTextWidth(measureRef.current.getBoundingClientRect().width);
+      }
+      setShowPen(window.innerWidth >= 1450);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [index, language, heroScale]);
+
   return (
     <div className="relative flex items-center justify-center h-[110px] md:h-[180px] w-full max-w-full">
-      {/* The Pen/Bar - sliding in from left */}
-      <motion.div
-        initial={{ x: "-100%" }}
-        animate={{ x: "0%" }}
-        transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-        className="absolute inset-y-0 flex items-center pointer-events-none"
-        style={{ right: "10vw", marginTop: "8px" }}
+      {/* Hidden measurement span */}
+      <span
+        ref={measureRef}
+        className="absolute top-0 left-0 invisible pointer-events-none font-['Anybody',sans-serif] font-black tracking-tighter whitespace-nowrap text-3xl sm:text-4xl md:text-8xl lg:text-9xl"
+        style={{ fontFamily: headingFontFamily, transform: `scale(${heroScale})` }}
+        aria-hidden="true"
       >
+        {words[index]}
+      </span>
+
+      {/* Purple stripe background (below 1450px, replaces pen) */}
+      {!showPen && (
+        <div
+          className="absolute inset-y-[10%] bg-[#7C5DEC]"
+          style={{ left: '50%', right: '50%', marginLeft: '-50vw', marginRight: '-50vw' }}
+        />
+      )}
+
+      {/* The Pen/Bar (1450px+) */}
+      {showPen && (
+        <motion.div
+          initial={{ x: "-100%" }}
+          animate={{ x: "0%" }}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          className="absolute inset-y-0 flex items-center pointer-events-none"
+          style={{ right: 0, marginTop: "8px" }}
+        >
         <div className="relative h-full w-full flex items-center">
-          <svg 
-            className="h-[120%] md:h-[150%] w-auto block overflow-visible" 
-            fill="none" 
+          <svg
+            className="h-[120%] md:h-[150%] w-auto block overflow-visible"
+            fill="none"
             viewBox="0 0 1710.36 149.808"
             style={{ filter: "drop-shadow(0px 4px 20px rgba(0,0,0,0.05))", transform: "scale(1.10, 1.20)" }}
           >
-            <g id="Frame 39523">
-              <g id="Vector">
-                {/* The paths are rendered in order. We need to make sure the nib (p21f97800) is visible at the end. */}
-                <path d={svgPathsPen.p32fa6980} fill="url(#paint0_linear_hero)" />
-                <path d={svgPathsPen.p2c92ab00} fill="url(#paint1_linear_hero)" />
-                <path d={svgPathsPen.p21f97800} fill="url(#paint2_linear_hero)" />
-              </g>
+          <g id="Frame 39523">
+            <g id="Vector">
+              <path d={svgPathsPen.p32fa6980} fill="url(#paint0_linear_hero)" />
+              <path d={svgPathsPen.p2c92ab00} fill="url(#paint1_linear_hero)" />
+              <path d={svgPathsPen.p21f97800} fill="url(#paint2_linear_hero)" />
             </g>
-            <defs>
-              <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_hero" x1="0" x2="1710" y1="75" y2="75">
-                <stop stopColor="#7C5DEC" />
-                <stop offset="1" stopColor="#7C5DEC" />
-              </linearGradient>
-              <linearGradient gradientUnits="userSpaceOnUse" id="paint1_linear_hero" x1="0" x2="1710" y1="75" y2="75">
-                <stop stopColor="#7C5DEC" />
-                <stop offset="1" stopColor="#7C5DEC" />
-              </linearGradient>
-              <linearGradient gradientUnits="userSpaceOnUse" id="paint2_linear_hero" x1="0" x2="1710" y1="75" y2="75">
-                <stop stopColor="#7C5DEC" />
-                <stop offset="1" stopColor="#7C5DEC" />
-              </linearGradient>
-            </defs>
-          </svg>
+          </g>
+          <defs>
+            <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_hero" x1="0" x2="1710" y1="75" y2="75">
+              <stop stopColor="#7C5DEC" />
+              <stop offset="1" stopColor="#7C5DEC" />
+            </linearGradient>
+            <linearGradient gradientUnits="userSpaceOnUse" id="paint1_linear_hero" x1="0" x2="1710" y1="75" y2="75">
+              <stop stopColor="#7C5DEC" />
+              <stop offset="1" stopColor="#7C5DEC" />
+            </linearGradient>
+            <linearGradient gradientUnits="userSpaceOnUse" id="paint2_linear_hero" x1="0" x2="1710" y1="75" y2="75">
+              <stop stopColor="#7C5DEC" />
+              <stop offset="1" stopColor="#7C5DEC" />
+            </linearGradient>
+          </defs>
+        </svg>
         </div>
       </motion.div>
+      )}
 
       {/* The Text - Centered over the bar */}
       <div className="relative z-10 w-full flex items-center justify-center">
@@ -959,6 +994,8 @@ const Footer = ({ t }: { t: (key: string, vars?: Record<string, string | number>
 
 export default function App() {
   const { scrollY } = useScroll();
+  const isMobile = useIsMobile();
+  const staticProgress = useMotionValue(0.5);
   const [language, setLanguage] = useState<LanguageCode>("en");
   const t = (key: string, vars?: Record<string, string | number>) =>
     translate(language, key, vars);
@@ -983,6 +1020,15 @@ export default function App() {
   const handleContactClick = () => {
     const el = document.getElementById('contact-section');
     el?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleMobileStepClick = (stepIndex: number) => {
+    if (!scrollRef.current) return;
+    const rect = scrollRef.current.getBoundingClientRect();
+    const containerTop = rect.top + window.scrollY;
+    const scrollRange = rect.height - window.innerHeight;
+    const targets = [0.33, 0.56, 0.80];
+    window.scrollTo({ top: containerTop + targets[stepIndex] * scrollRange, behavior: 'smooth' });
   };
   
   // Updated color transitions: 
@@ -1189,74 +1235,62 @@ export default function App() {
         </motion.div>
       </section>
 
-      {/* How It Works Section - Sticky Scroll Layout */}
+      {/* How It Works Section */}
       <section id="how-it-works" className="relative">
-        <div className="h-[320vh] md:h-[480vh] relative" ref={scrollRef}>
-          <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 md:px-24">
-            
-            {/* Centered Title that fades out */}
-            <motion.div 
-              style={{ opacity: titleOpacity, scale: titleScale }}
-              className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
-            >
-              <h2
-                className="font-['Anybody',sans-serif] font-black text-3xl sm:text-5xl md:text-7xl uppercase tracking-tight text-white leading-none"
-                style={{ fontFamily: headingFontFamily }}
-              >
-                {t("how_it_works_title")}
-              </h2>
-            </motion.div>
+        {isMobile ? (
+          /* Mobile: Sticky scroll with card carousel + direct dark bg */
+          <div className="h-[250vh] relative bg-[#19191b]" ref={scrollRef}>
+            <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden px-4">
 
-            {/* Sticky Content */}
-            <motion.div 
-              style={{ opacity: contentOpacity, y: contentY }}
-              className="max-w-[1440px] mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-24 items-center"
-            >
-              
-              {/* Left Side: Steps Indicators (Vertical and Slim) */}
-              <div className="md:col-span-3 flex flex-col gap-6">
-                <div className="space-y-4">
+              {/* Title that fades out */}
+              <motion.div
+                style={{ opacity: titleOpacity, scale: titleScale }}
+                className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
+              >
+                <h2
+                  className="font-['Anybody',sans-serif] font-black text-3xl uppercase tracking-tight text-white leading-none"
+                  style={{ fontFamily: headingFontFamily }}
+                >
+                  {t("how_it_works_title")}
+                </h2>
+              </motion.div>
+
+              <motion.div
+                style={{ opacity: contentOpacity, y: contentY }}
+                className="w-full flex flex-col items-center gap-6"
+              >
+                {/* Step indicators — clickable */}
+                <div className="flex gap-6 justify-center">
                   {steps.map((step, i) => (
-                    <div 
+                    <button
                       key={step.id}
-                      className="relative pl-6 group"
+                      onClick={() => handleMobileStepClick(i)}
+                      className={`font-['Anybody',sans-serif] font-bold text-sm tracking-tight transition-all duration-300 cursor-pointer ${activeStep === i ? 'text-white' : 'text-white/30'}`}
+                      style={{ fontFamily: headingFontFamily }}
                     >
-                      <motion.div 
-                        animate={{ 
-                          scaleY: activeStep === i ? 1 : 0,
-                          opacity: activeStep === i ? 1 : 0
-                        }}
-                        className="absolute left-0 top-0 bottom-0 w-0.5 bg-white origin-top"
-                      />
-                      <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-white/10" />
-                      
-                      <h3 className={`font-['Prompt',sans-serif] font-medium text-lg transition-all duration-300 ${activeStep === i ? 'text-white translate-x-1' : 'text-white/30'}`}>
-                        {step.label}
-                      </h3>
-                    </div>
+                      {step.label}
+                    </button>
                   ))}
                 </div>
-              </div>
 
-              {/* Center/Right: Visual Showcase + Explanation Below */}
-              <div className="md:col-span-9 flex flex-col items-center gap-16 pt-20">
-                <div className="relative aspect-video w-full overflow-hidden sm:overflow-visible">
+                {/* Card stack */}
+                <div className="relative aspect-[4/3] w-full max-w-[90vw] overflow-visible">
                   {steps.map((step, i) => (
                     <motion.div
                       key={step.id}
                       initial={false}
-                      animate={{ 
-                        y: i < activeStep ? -400 : (i - activeStep) * 20,
+                      animate={{
+                        y: i < activeStep ? -300 : (i - activeStep) * 14,
                         scale: i < activeStep ? 1 : 1 - (i - activeStep) * 0.05,
                         opacity: i < activeStep ? 0 : 1,
                         rotate: i < activeStep ? -5 : 0,
                         zIndex: steps.length - i
                       }}
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      className="absolute inset-0 bg-white rounded-2xl sm:rounded-3xl md:rounded-[40px] shadow-[0_30px_60px_rgba(0,0,0,0.3)] flex items-center justify-center border border-black/5"
+                      className="absolute inset-0 bg-white rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.3)] flex items-center justify-center border border-black/5"
                     >
                       <div className="absolute inset-0 rounded-[inherit] overflow-hidden">
-                        {i === 0 && <ImportVisualization progress={scrollYProgress} t={t} />}
+                        {i === 0 && <ImportVisualization progress={staticProgress} t={t} />}
                         {i === 1 && <GenerateVisualization t={t} />}
                         {i === 2 && <ExportVisualization t={t} />}
                       </div>
@@ -1265,8 +1299,8 @@ export default function App() {
                   ))}
                 </div>
 
-                {/* Explanation text directly below the showcase */}
-                <div className="min-h-[120px] max-w-2xl text-center">
+                {/* Description — bg to prevent card shadow bleed */}
+                <div className="relative z-20 min-h-[80px] text-center px-2 bg-[#19191b]">
                   <AnimatePresence mode="wait">
                     {activeStep >= 0 && (
                       <motion.div
@@ -1276,7 +1310,7 @@ export default function App() {
                         exit={{ opacity: 0, y: -15 }}
                         transition={{ duration: 0.5 }}
                       >
-                        <p className="font-['Prompt',sans-serif] text-xl md:text-2xl leading-relaxed opacity-70 text-white">
+                        <p className="font-['Prompt',sans-serif] text-base leading-relaxed opacity-70 text-white">
                           {activeStep === 0 && t("step_desc_import")}
                           {activeStep === 1 && t("step_desc_generate")}
                           {activeStep === 2 && t("step_desc_export")}
@@ -1285,17 +1319,117 @@ export default function App() {
                     )}
                   </AnimatePresence>
                 </div>
-              </div>
-
-            </motion.div>
+              </motion.div>
+            </div>
           </div>
-        </div>
+        ) : (
+          /* Desktop: Sticky scroll layout (unchanged) */
+          <div className="h-[480vh] relative" ref={scrollRef}>
+            <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 md:px-24">
+
+              {/* Centered Title that fades out */}
+              <motion.div
+                style={{ opacity: titleOpacity, scale: titleScale }}
+                className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
+              >
+                <h2
+                  className="font-['Anybody',sans-serif] font-black text-3xl sm:text-5xl md:text-7xl uppercase tracking-tight text-white leading-none"
+                  style={{ fontFamily: headingFontFamily }}
+                >
+                  {t("how_it_works_title")}
+                </h2>
+              </motion.div>
+
+              {/* Sticky Content */}
+              <motion.div
+                style={{ opacity: contentOpacity, y: contentY }}
+                className="max-w-[1440px] mx-auto w-full grid grid-cols-12 gap-24 items-center"
+              >
+
+                {/* Left Side: Steps Indicators (Vertical and Slim) */}
+                <div className="col-span-3 flex flex-col gap-6">
+                  <div className="space-y-4">
+                    {steps.map((step, i) => (
+                      <div
+                        key={step.id}
+                        className="relative pl-6 group"
+                      >
+                        <motion.div
+                          animate={{
+                            scaleY: activeStep === i ? 1 : 0,
+                            opacity: activeStep === i ? 1 : 0
+                          }}
+                          className="absolute left-0 top-0 bottom-0 w-0.5 bg-white origin-top"
+                        />
+                        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-white/10" />
+
+                        <h3 className={`font-['Prompt',sans-serif] font-medium text-lg transition-all duration-300 ${activeStep === i ? 'text-white translate-x-1' : 'text-white/30'}`}>
+                          {step.label}
+                        </h3>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Center/Right: Visual Showcase + Explanation Below */}
+                <div className="col-span-9 flex flex-col items-center gap-16 pt-20">
+                  <div className="relative aspect-video w-full overflow-visible">
+                    {steps.map((step, i) => (
+                      <motion.div
+                        key={step.id}
+                        initial={false}
+                        animate={{
+                          y: i < activeStep ? -400 : (i - activeStep) * 20,
+                          scale: i < activeStep ? 1 : 1 - (i - activeStep) * 0.05,
+                          opacity: i < activeStep ? 0 : 1,
+                          rotate: i < activeStep ? -5 : 0,
+                          zIndex: steps.length - i
+                        }}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        className="absolute inset-0 bg-white rounded-3xl md:rounded-[40px] shadow-[0_30px_60px_rgba(0,0,0,0.3)] flex items-center justify-center border border-black/5"
+                      >
+                        <div className="absolute inset-0 rounded-[inherit] overflow-hidden">
+                          {i === 0 && <ImportVisualization progress={scrollYProgress} t={t} />}
+                          {i === 1 && <GenerateVisualization t={t} />}
+                          {i === 2 && <ExportVisualization t={t} />}
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-tr from-black/5 to-transparent pointer-events-none rounded-[inherit]" />
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Explanation text directly below the showcase */}
+                  <div className="min-h-[120px] max-w-2xl text-center">
+                    <AnimatePresence mode="wait">
+                      {activeStep >= 0 && (
+                        <motion.div
+                          key={`desc-${activeStep}`}
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -15 }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          <p className="font-['Prompt',sans-serif] text-xl md:text-2xl leading-relaxed opacity-70 text-white">
+                            {activeStep === 0 && t("step_desc_import")}
+                            {activeStep === 1 && t("step_desc_generate")}
+                            {activeStep === 2 && t("step_desc_export")}
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+
+              </motion.div>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Contact Section */}
-      <section 
-        id="contact-section" 
-        className="py-16 md:py-32 px-4 sm:px-6 md:px-24 overflow-hidden"
+      <section
+        id="contact-section"
+        className={`py-16 md:py-32 px-4 sm:px-6 md:px-24 overflow-hidden ${isMobile ? 'bg-[#19191b] text-white' : ''}`}
       >
         <div className="max-w-4xl mx-auto">
           <motion.div
