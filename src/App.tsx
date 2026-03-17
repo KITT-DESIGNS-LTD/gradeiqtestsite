@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring, AnimatePresence, useInView } from 'motion/react';
-import { Plus, ArrowRight } from 'lucide-react';
+import { Plus, ArrowRight, Menu, X } from 'lucide-react';
 import { Input } from "./components/ui/input";
 import { Textarea } from "./components/ui/textarea";
 import { Label } from "./components/ui/label";
@@ -36,6 +36,7 @@ const Navbar = ({
   const height = useTransform(scrollY, [0, 100], [100, 80]);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isGlobeHover, setIsGlobeHover] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const languageDropdownOffsetX = 12;
 
   const languages = [
@@ -91,14 +92,83 @@ const Navbar = ({
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       style={{ height, backgroundColor: navBg, color: textColor }}
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-12 md:px-24 backdrop-blur-md border-b border-black/5 transition-all duration-200"
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 md:px-24 backdrop-blur-md border-b border-black/5 transition-all duration-200"
     >
       <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-        <motion.img src={LogoSvg} alt="GRADE IQ" className="h-[40px]" style={{ filter: logoFilter, height: 40 }} />
+        <motion.img src={LogoSvg} alt="GRADE IQ" className="h-[32px] md:h-[40px]" style={{ filter: logoFilter }} />
       </div>
-      
-      <div className="flex items-center gap-12 font-['Prompt',sans-serif] font-medium text-lg">
-        <button 
+
+      {/* Mobile hamburger */}
+      <button
+        className="md:hidden p-2 cursor-pointer bg-transparent border-none text-inherit"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label="Toggle menu"
+      >
+        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      {/* Mobile menu overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md border-b border-black/10 flex flex-col items-center gap-4 py-6 md:hidden"
+            style={{ zIndex: 9998 }}
+          >
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                const el = document.getElementById('how-it-works');
+                el?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-[#19191b] font-['Prompt',sans-serif] font-medium text-lg"
+            >
+              {t("nav_product")}
+            </button>
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                onContactClick();
+              }}
+              className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-[#19191b] font-['Prompt',sans-serif] font-medium text-lg"
+            >
+              {t("nav_contact")}
+            </button>
+            <a
+              href="https://demo.gradeiq.org/login"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#19191b] text-white px-6 py-2.5 rounded-full font-['Prompt',sans-serif] font-medium text-lg flex items-center gap-2 no-underline"
+            >
+              {t("nav_demo")} <ArrowRight size={18} />
+            </a>
+            <div className="flex items-center gap-2 mt-2">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => {
+                    setLanguage(lang.code);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  aria-label={lang.label}
+                  className={`w-10 h-10 flex items-center justify-center rounded-lg border cursor-pointer
+                    ${language === lang.code ? 'bg-[#7C5DED]/10 border-[#7C5DED]/20' : 'bg-transparent border-transparent hover:bg-gray-100'}
+                  `}
+                >
+                  <img src={lang.flagSrc} alt={lang.flagAlt} className="w-7 h-5 object-contain" />
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Desktop nav */}
+      <div className="hidden md:flex items-center gap-12 font-['Prompt',sans-serif] font-medium text-lg">
+        <button
           onClick={() => {
             const el = document.getElementById('how-it-works');
             el?.scrollIntoView({ behavior: 'smooth' });
@@ -107,22 +177,24 @@ const Navbar = ({
         >
           {t("nav_product")}
         </button>
-        <button 
+        <button
           onClick={onContactClick}
           className="hover:opacity-60 transition-opacity cursor-pointer bg-transparent border-none p-0 text-inherit font-inherit"
         >
           {t("nav_contact")}
         </button>
         <div className="flex items-center gap-12">
-          <motion.button
+          <motion.a
+            href="https://demo.gradeiq.org/login"
+            target="_blank"
+            rel="noopener noreferrer"
             initial="initial"
             whileHover="hover"
             whileTap={{ scale: 0.98 }}
-            onClick={onContactClick}
             style={{ backgroundColor: buttonBg, color: buttonText }}
-            className="relative px-6 py-2.5 rounded-full flex items-center gap-2 cursor-pointer font-medium overflow-hidden group transition-colors duration-300"
+            className="relative px-6 py-2.5 rounded-full flex items-center gap-2 cursor-pointer font-medium overflow-hidden group transition-colors duration-300 no-underline"
           >
-            <motion.div 
+            <motion.div
               variants={{
                 initial: { x: "-100%" },
                 hover: { x: 0 }
@@ -133,7 +205,7 @@ const Navbar = ({
             <span className="relative z-10 flex items-center gap-2 group-hover:text-white transition-colors duration-300">
               {t("nav_demo")} <motion.div variants={{ hover: { x: 4 } }} transition={{ type: "spring", stiffness: 400, damping: 10 }}><ArrowRight size={18} /></motion.div>
             </span>
-          </motion.button>
+          </motion.a>
           <div className="relative">
             <motion.button
               type="button"
@@ -266,9 +338,9 @@ const MacBookMockup = () => {
       transition={{ duration: 0.6, ease: "easeOut" }}
       viewport={{ once: true }}
       style={{ y: yParallax }}
-      className="relative w-full max-w-[1300px] mx-auto mt-20"
+      className="relative w-full max-w-[1300px] mx-auto mt-10 md:mt-20 px-4 md:px-0"
     >
-      <div className="relative scale-110 origin-center">
+      <div className="relative md:scale-110 origin-center">
         <img src={imgMacMockup} alt="Grade IQ Dashboard on MacBook" className="w-full h-auto object-contain" />
       </div>
     </motion.div>
@@ -581,25 +653,25 @@ const SolutionRow = ({
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
               <p className="text-black mb-8">{t("biology_question")}</p>
-              <div className="relative flex justify-between gap-12 max-w-lg mx-auto min-h-[220px]">
+              <div className="relative flex flex-col sm:flex-row justify-between gap-6 sm:gap-12 max-w-lg mx-auto min-h-[180px] sm:min-h-[220px]">
                 {/* Left Side: Terms */}
-                <div className="space-y-6 z-10 flex flex-col justify-between">
-                  <div className="flex items-center gap-3 group">
-                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium border border-black/5 w-40 text-center">{t("biology_term1")}</div>
+                <div className="space-y-4 sm:space-y-6 z-10 flex flex-col justify-between">
+                  <div className="flex items-center gap-2 sm:gap-3 group">
+                    <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-xl text-xs sm:text-sm font-medium border border-black/5 w-28 sm:w-40 text-center">{t("biology_term1")}</div>
                     <div ref={term1Ref} className="size-2 rounded-full bg-[#7C5DED]" id="term-1" />
                   </div>
-                  <div className="flex items-center gap-3 group">
-                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium border border-black/5 w-40 text-center">{t("biology_term2")}</div>
+                  <div className="flex items-center gap-2 sm:gap-3 group">
+                    <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-xl text-xs sm:text-sm font-medium border border-black/5 w-28 sm:w-40 text-center">{t("biology_term2")}</div>
                     <div ref={term2Ref} className="size-2 rounded-full bg-[#7C5DED]" id="term-2" />
                   </div>
-                  <div className="flex items-center gap-3 group">
-                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-sm font-medium border border-black/5 w-40 text-center">{t("biology_term3")}</div>
+                  <div className="flex items-center gap-2 sm:gap-3 group">
+                    <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-xl text-xs sm:text-sm font-medium border border-black/5 w-28 sm:w-40 text-center">{t("biology_term3")}</div>
                     <div ref={term3Ref} className="size-2 rounded-full bg-[#7C5DED]" id="term-3" />
                   </div>
                 </div>
-                
+
                 {/* SVG Connections */}
-                <svg ref={linesSvgRef} className="absolute inset-0 w-full h-full pointer-events-none overflow-visible" style={{ zIndex: 0 }}>
+                <svg ref={linesSvgRef} className="absolute inset-0 w-full h-full pointer-events-none overflow-visible hidden sm:block" style={{ zIndex: 0 }}>
                   <defs>
                     <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                       <stop offset="0%" stopColor="#7C5DED" stopOpacity="0.2" />
@@ -657,18 +729,18 @@ const SolutionRow = ({
                 </svg>
 
                 {/* Right Side: Definitions */}
-                <div className="space-y-6 z-10 flex flex-col justify-between items-end">
-                  <div className="flex items-center gap-3 group">
+                <div className="space-y-4 sm:space-y-6 z-10 flex flex-col justify-between items-end">
+                  <div className="flex items-center gap-2 sm:gap-3 group">
                     <div ref={def1Ref} className="size-2 rounded-full bg-[#7C5DED]" id="def-1" />
-                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-xs font-medium border border-black/5 w-48">{t("biology_def1")}</div>
+                    <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-xl text-[10px] sm:text-xs font-medium border border-black/5 w-36 sm:w-48">{t("biology_def1")}</div>
                   </div>
-                  <div className="flex items-center gap-3 group">
+                  <div className="flex items-center gap-2 sm:gap-3 group">
                     <div ref={def2Ref} className="size-2 rounded-full bg-[#7C5DED]" id="def-2" />
-                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-xs font-medium border border-black/5 w-48">{t("biology_def2")}</div>
+                    <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-xl text-[10px] sm:text-xs font-medium border border-black/5 w-36 sm:w-48">{t("biology_def2")}</div>
                   </div>
-                  <div className="flex items-center gap-3 group">
+                  <div className="flex items-center gap-2 sm:gap-3 group">
                     <div ref={def3Ref} className="size-2 rounded-full bg-[#7C5DED]" id="def-3" />
-                    <div className="px-4 py-3 bg-gray-50 rounded-xl text-xs font-medium border border-black/5 w-48">{t("biology_def3")}</div>
+                    <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-xl text-[10px] sm:text-xs font-medium border border-black/5 w-36 sm:w-48">{t("biology_def3")}</div>
                   </div>
                 </div>
               </div>
@@ -727,15 +799,15 @@ const SolutionRow = ({
       <motion.div
         whileHover={{ backgroundColor: "rgba(0,0,0,0.02)" }}
         onClick={onToggle}
-        className="flex items-center justify-between py-6 px-4 border-b border-black/10 cursor-pointer overflow-hidden"
+        className="flex items-center justify-between py-4 sm:py-6 px-2 sm:px-4 border-b border-black/10 cursor-pointer overflow-hidden"
       >
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-4 sm:gap-8">
           <motion.div
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : {}}
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.25, delay: delay }}
-            className="size-16 rounded-xl flex items-center justify-center overflow-hidden"
+            className="size-12 sm:size-16 rounded-xl flex items-center justify-center overflow-hidden shrink-0"
           >
              {Icon}
           </motion.div>
@@ -809,7 +881,7 @@ const WordRotator = ({
   }, [words.length]);
 
   return (
-    <div className="relative flex items-center justify-center h-[110px] md:h-[180x] w-full max-w-full">
+    <div className="relative flex items-center justify-center h-[80px] md:h-[180px] w-full max-w-full">
       {/* The Pen/Bar - sliding in from left */}
       <motion.div
         initial={{ x: "-100%" }}
@@ -861,7 +933,7 @@ const WordRotator = ({
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -40, opacity: 0 }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="font-['Anybody',sans-serif] font-black tracking-tighter text-white whitespace-nowrap block text-4xl md:text-8xl lg:text-9xl"
+              className="font-['Anybody',sans-serif] font-black tracking-tighter text-white whitespace-nowrap block text-3xl sm:text-4xl md:text-8xl lg:text-9xl"
               style={{ fontFamily: headingFontFamily }}
             >
               {words[index]}
@@ -877,7 +949,7 @@ const Footer = ({ t }: { t: (key: string, vars?: Record<string, string | number>
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#19191b] text-white py-12 px-6 md:px-24 border-t border-white/10">
+    <footer className="bg-[#19191b] text-white py-8 md:py-12 px-4 sm:px-6 md:px-24 border-t border-white/10">
       <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6 font-['Prompt',sans-serif] opacity-40 text-sm">
         <p>{t("footer_rights", { year: currentYear })}</p>
       </div>
@@ -981,7 +1053,7 @@ export default function App() {
       <Navbar onContactClick={handleContactClick} language={language} setLanguage={setLanguage} t={t} />
 
       {/* Hero Section */}
-      <section className="pt-40 pb-20 max-w-auto mx-auto text-center overflow-hidden">
+      <section className="pt-28 md:pt-40 pb-10 md:pb-20 max-w-auto mx-auto text-center overflow-hidden px-4 md:px-0">
         <div className="flex flex-col items-center">
           {/* Headline */}
           <div className={`relative flex flex-col items-center w-full ${isVietnamese ? "gap-6" : "gap-4"}`}>
@@ -990,7 +1062,7 @@ export default function App() {
                 initial={{ y: 16, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.35, ease: "easeOut", delay: 0 }}
-                className="font-['Anybody',sans-serif] font-black tracking-tighter text-6xl md:text-9xl"
+                className="font-['Anybody',sans-serif] font-black tracking-tighter text-4xl sm:text-6xl md:text-9xl"
                 style={{ fontFamily: headingFontFamily }}
               >
                 {t("hero_generate")}
@@ -1005,7 +1077,7 @@ export default function App() {
                   initial={{ y: 16, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.35, ease: "easeOut", delay: 0.16 }}
-                  className="font-['Anybody',sans-serif] font-black tracking-tighter text-6xl md:text-9xl"
+                  className="font-['Anybody',sans-serif] font-black tracking-tighter text-4xl sm:text-6xl md:text-9xl"
                   style={{ fontFamily: headingFontFamily }}
                 >
                   {t("hero_instantly")}
@@ -1018,7 +1090,7 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: 0.4 }}
-            className="mt-12 max-w-2xl font-['Prompt',sans-serif] text-xl md:text-2xl leading-relaxed opacity-70"
+            className="mt-8 md:mt-12 max-w-2xl font-['Prompt',sans-serif] text-base sm:text-xl md:text-2xl leading-relaxed opacity-70 px-4 md:px-0"
           >
             {t("hero_tagline")}
           </motion.p>
@@ -1030,7 +1102,7 @@ export default function App() {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.25, ease: "easeOut", delay: 0.5 }}
             onClick={handleContactClick}
-            className="relative mt-12 bg-[#19191b] text-white px-10 py-5 rounded-full font-['Prompt',sans-serif] font-medium text-xl cursor-pointer overflow-hidden group"
+            className="relative mt-8 md:mt-12 bg-[#19191b] text-white px-8 md:px-10 py-4 md:py-5 rounded-full font-['Prompt',sans-serif] font-medium text-lg md:text-xl cursor-pointer overflow-hidden group"
           >
             <motion.div 
               variants={{
@@ -1056,13 +1128,13 @@ export default function App() {
       </section>
 
       {/* Examples Section */}
-      <section id="solutions" className="py-32 px-6 md:px-24 max-w-[1440px] mx-auto text-center">
+      <section id="solutions" className="py-16 md:py-32 px-4 sm:px-6 md:px-24 max-w-[1440px] mx-auto text-center">
         <motion.h2
           initial={{ y: -10, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className="font-['Anybody',sans-serif] font-black text-5xl md:text-7xl mb-16 inline-block"
+          className="font-['Anybody',sans-serif] font-black text-3xl sm:text-5xl md:text-7xl mb-8 md:mb-16 inline-block"
           style={{ fontFamily: headingFontFamily }}
         >
           {t("examples_title")}
@@ -1101,11 +1173,11 @@ export default function App() {
         <motion.div
           ref={featuresRef}
           style={{ opacity: featuresOpacity, scale: featuresScale }}
-          className="mt-24 p-12 md:p-16 border border-black/5 rounded-[40px] bg-gray-50/50 flex flex-col items-center text-center gap-8"
+          className="mt-12 md:mt-24 p-6 sm:p-12 md:p-16 border border-black/5 rounded-2xl md:rounded-[40px] bg-gray-50/50 flex flex-col items-center text-center gap-6 md:gap-8"
         >
           <div className="max-w-3xl">
             <h3
-              className="font-['Anybody',sans-serif] font-black text-3xl md:text-4xl mb-4 uppercase tracking-tight"
+              className="font-['Anybody',sans-serif] font-black text-2xl sm:text-3xl md:text-4xl mb-4 uppercase tracking-tight"
               style={{ fontFamily: headingFontFamily }}
             >
               {t("additional_features_title")}
@@ -1120,7 +1192,7 @@ export default function App() {
       {/* How It Works Section - Sticky Scroll Layout */}
       <section id="how-it-works" className="relative">
         <div className="h-[480vh] relative" ref={scrollRef}>
-          <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden px-6 md:px-24">
+          <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 md:px-24">
             
             {/* Centered Title that fades out */}
             <motion.div 
@@ -1128,7 +1200,7 @@ export default function App() {
               className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
             >
               <h2
-                className="font-['Anybody',sans-serif] font-black text-5xl md:text-7xl uppercase tracking-tight text-white leading-none"
+                className="font-['Anybody',sans-serif] font-black text-3xl sm:text-5xl md:text-7xl uppercase tracking-tight text-white leading-none"
                 style={{ fontFamily: headingFontFamily }}
               >
                 {t("how_it_works_title")}
@@ -1181,7 +1253,7 @@ export default function App() {
                         zIndex: steps.length - i
                       }}
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      className="absolute inset-0 bg-white rounded-3xl md:rounded-[40px] shadow-[0_30px_60px_rgba(0,0,0,0.3)] flex items-center justify-center border border-black/5"
+                      className="absolute inset-0 bg-white rounded-2xl sm:rounded-3xl md:rounded-[40px] shadow-[0_30px_60px_rgba(0,0,0,0.3)] flex items-center justify-center border border-black/5"
                     >
                       <div className="absolute inset-0 rounded-[inherit] overflow-hidden">
                         {i === 0 && <ImportVisualization progress={scrollYProgress} t={t} />}
@@ -1223,7 +1295,7 @@ export default function App() {
       {/* Contact Section */}
       <section 
         id="contact-section" 
-        className="py-32 px-6 md:px-24 overflow-hidden"
+        className="py-16 md:py-32 px-4 sm:px-6 md:px-24 overflow-hidden"
       >
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -1234,7 +1306,7 @@ export default function App() {
             className="text-center mb-16"
           >
             <h2
-              className="font-['Anybody',sans-serif] font-black text-5xl md:text-7xl mb-6 uppercase tracking-tight"
+              className="font-['Anybody',sans-serif] font-black text-3xl sm:text-5xl md:text-7xl mb-6 uppercase tracking-tight"
               style={{ fontFamily: headingFontFamily }}
             >
               {t("contact_title")}
