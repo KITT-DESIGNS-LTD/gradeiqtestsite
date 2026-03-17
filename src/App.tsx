@@ -881,7 +881,7 @@ const WordRotator = ({
   }, [words.length]);
 
   return (
-    <div className="relative flex items-center justify-center h-[80px] md:h-[180px] w-full max-w-full">
+    <div className="relative flex items-center justify-center h-[110px] md:h-[180px] w-full max-w-full">
       {/* The Pen/Bar - sliding in from left */}
       <motion.div
         initial={{ x: "-100%" }}
