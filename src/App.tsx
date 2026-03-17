@@ -1191,7 +1191,7 @@ export default function App() {
 
       {/* How It Works Section - Sticky Scroll Layout */}
       <section id="how-it-works" className="relative">
-        <div className="h-[480vh] relative" ref={scrollRef}>
+        <div className="h-[320vh] md:h-[480vh] relative" ref={scrollRef}>
           <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 md:px-24">
             
             {/* Centered Title that fades out */}
