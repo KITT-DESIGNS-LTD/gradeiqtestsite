@@ -109,7 +109,7 @@ export function ImportVisualization({ progress, t }: ImportVisualizationProps) {
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="flex-1 border-2 border-dashed border-[#d9d9d9] rounded-xl flex flex-col items-center justify-center gap-4 md:gap-6 p-4"
+          className="flex-1 border-2 border-dashed border-[#d9d9d9] rounded-xl flex flex-col items-center justify-center gap-4 md:gap-6 p-4 mb-4 md:mb-6"
         >
           <div className="relative size-12 md:size-20 text-[#d9d9d9]">
             <svg className="size-full" viewBox="0 0 76 73" fill="none">

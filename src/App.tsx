@@ -389,6 +389,8 @@ const SolutionRow = ({
   const [englishTyped, setEnglishTyped] = useState("");
   const englishTimer = useRef<number | null>(null);
   const [englishSelectKey, setEnglishSelectKey] = useState(0);
+  const [physicsTyped, setPhysicsTyped] = useState("");
+  const physicsTimer = useRef<number | null>(null);
   const [csSelectKey, setCsSelectKey] = useState(0);
 
   useLayoutEffect(() => {
@@ -497,6 +499,38 @@ const SolutionRow = ({
   }, [id, isOpen, language, t]);
 
   useEffect(() => {
+    if (id !== "physics") return;
+    if (!isOpen) {
+      setPhysicsTyped("");
+      return;
+    }
+
+    const fullText = t("physics_answer");
+    let index = 0;
+    setPhysicsTyped("");
+
+    const perCharDelay =
+      language === "zh-Hant" || language === "zh-Hans" ? 45 : 18;
+
+    const typeNext = () => {
+      index += 1;
+      setPhysicsTyped(fullText.slice(0, index));
+      if (index < fullText.length) {
+        physicsTimer.current = window.setTimeout(typeNext, perCharDelay);
+      }
+    };
+
+    physicsTimer.current = window.setTimeout(typeNext, 120);
+
+    return () => {
+      if (physicsTimer.current) {
+        window.clearTimeout(physicsTimer.current);
+        physicsTimer.current = null;
+      }
+    };
+  }, [id, isOpen, language, t]);
+
+  useEffect(() => {
     if (id !== "mathematics") return;
     if (isOpen) {
       setMathSwipeKey((prev) => prev + 1);
@@ -552,12 +586,11 @@ const SolutionRow = ({
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
               <p className="text-black mb-4">{t("english_question")}</p>
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex flex-wrap items-center gap-2 mb-4">
                 <span className="text-black">{t("english_blank_prefix")}</span>
                 <div
-                  className="rounded-md shrink-0 inline-flex items-center justify-center px-2 text-sm font-medium text-black leading-none align-middle"
+                  className="rounded-md shrink-0 inline-flex items-center justify-center px-2 text-sm font-medium text-black leading-none align-middle w-[120px] sm:w-[176px]"
                   style={{
-                    width: "176px",
                     height: "28px",
                     lineHeight: "28px",
                     textAlign: "center",
@@ -624,27 +657,11 @@ const SolutionRow = ({
         return (
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
-              <p className="text-black mb-4">{t("physics_question")}</p>
-              <div className="space-y-2">
-                <motion.div
-                  className="h-4 bg-gray-100 rounded w-full origin-left"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: isOpen ? 1 : 0 }}
-                  transition={{ duration: 0.35, ease: "easeOut" }}
-                />
-                <motion.div
-                  className="h-4 bg-gray-100 rounded w-5/6 origin-left"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: isOpen ? 1 : 0 }}
-                  transition={{ duration: 0.32, ease: "easeOut", delay: 0.08 }}
-                />
-                <motion.div
-                  className="h-4 bg-gray-100 rounded w-4/6 origin-left"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: isOpen ? 1 : 0 }}
-                  transition={{ duration: 0.3, ease: "easeOut", delay: 0.16 }}
-                />
-              </div>
+              <p className="text-black mb-2">{t("physics_question")}</p>
+              <p className="text-black/80 text-sm leading-relaxed py-2 min-h-[28px] font-['Prompt',sans-serif]">
+                {physicsTyped}
+              </p>
+              <div className="h-px bg-black/10 w-full mt-1" />
             </div>
             <p className="text-sm font-medium text-black/40 italic">{t("physics_desc")}</p>
           </div>
@@ -654,20 +671,20 @@ const SolutionRow = ({
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
               <p className="text-black mb-8">{t("biology_question")}</p>
-              <div className="relative flex flex-col sm:flex-row justify-between gap-6 sm:gap-12 max-w-lg mx-auto min-h-[180px] sm:min-h-[220px]">
+              <div className="relative flex flex-col sm:flex-row justify-between gap-6 sm:gap-12 max-w-lg mx-auto min-h-[360px] sm:min-h-[220px]">
                 {/* Left Side: Terms */}
                 <div className="space-y-4 sm:space-y-6 z-10 flex flex-col justify-between">
                   <div className="flex items-center gap-2 sm:gap-3 group">
                     <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-xl text-xs sm:text-sm font-medium border border-black/5 w-28 sm:w-40 text-center">{t("biology_term1")}</div>
-                    <div ref={term1Ref} className="size-2 rounded-full bg-[#7C5DED]" id="term-1" />
+                    <div ref={term1Ref} className="size-2 rounded-full bg-[#7C5DED] hidden sm:block" id="term-1" />
                   </div>
                   <div className="flex items-center gap-2 sm:gap-3 group">
                     <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-xl text-xs sm:text-sm font-medium border border-black/5 w-28 sm:w-40 text-center">{t("biology_term2")}</div>
-                    <div ref={term2Ref} className="size-2 rounded-full bg-[#7C5DED]" id="term-2" />
+                    <div ref={term2Ref} className="size-2 rounded-full bg-[#7C5DED] hidden sm:block" id="term-2" />
                   </div>
                   <div className="flex items-center gap-2 sm:gap-3 group">
                     <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-xl text-xs sm:text-sm font-medium border border-black/5 w-28 sm:w-40 text-center">{t("biology_term3")}</div>
-                    <div ref={term3Ref} className="size-2 rounded-full bg-[#7C5DED]" id="term-3" />
+                    <div ref={term3Ref} className="size-2 rounded-full bg-[#7C5DED] hidden sm:block" id="term-3" />
                   </div>
                 </div>
 
@@ -730,17 +747,17 @@ const SolutionRow = ({
                 </svg>
 
                 {/* Right Side: Definitions */}
-                <div className="space-y-4 sm:space-y-6 z-10 flex flex-col justify-between items-end">
-                  <div className="flex items-center gap-2 sm:gap-3 group">
-                    <div ref={def1Ref} className="size-2 rounded-full bg-[#7C5DED]" id="def-1" />
+                <div className="space-y-4 sm:space-y-6 z-10 flex flex-col justify-between items-start sm:items-end">
+                  <div className="flex flex-row-reverse sm:flex-row items-center gap-2 sm:gap-3 group">
+                    <div ref={def1Ref} className="size-2 rounded-full bg-[#7C5DED] hidden sm:block" id="def-1" />
                     <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-xl text-[10px] sm:text-xs font-medium border border-black/5 w-36 sm:w-48">{t("biology_def1")}</div>
                   </div>
-                  <div className="flex items-center gap-2 sm:gap-3 group">
-                    <div ref={def2Ref} className="size-2 rounded-full bg-[#7C5DED]" id="def-2" />
+                  <div className="flex flex-row-reverse sm:flex-row items-center gap-2 sm:gap-3 group">
+                    <div ref={def2Ref} className="size-2 rounded-full bg-[#7C5DED] hidden sm:block" id="def-2" />
                     <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-xl text-[10px] sm:text-xs font-medium border border-black/5 w-36 sm:w-48">{t("biology_def2")}</div>
                   </div>
-                  <div className="flex items-center gap-2 sm:gap-3 group">
-                    <div ref={def3Ref} className="size-2 rounded-full bg-[#7C5DED]" id="def-3" />
+                  <div className="flex flex-row-reverse sm:flex-row items-center gap-2 sm:gap-3 group">
+                    <div ref={def3Ref} className="size-2 rounded-full bg-[#7C5DED] hidden sm:block" id="def-3" />
                     <div className="px-3 sm:px-4 py-2 sm:py-3 bg-gray-50 rounded-xl text-[10px] sm:text-xs font-medium border border-black/5 w-36 sm:w-48">{t("biology_def3")}</div>
                   </div>
                 </div>
@@ -778,6 +795,7 @@ const SolutionRow = ({
                 <div className="px-6 py-2 bg-gray-100 text-black rounded-full text-sm font-bold">{t("cs_false")}</div>
               </div>
             </div>
+            <p className="text-sm font-medium text-black/40 italic">{t("cs_desc")}</p>
           </div>
         );
       default:
@@ -923,7 +941,7 @@ const WordRotator = ({
           animate={{ x: "0%" }}
           transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           className="absolute inset-y-0 flex items-center pointer-events-none"
-          style={{ right: 0, marginTop: "8px" }}
+          style={{ right: "10vw", marginTop: "8px" }}
         >
         <div className="relative h-full w-full flex items-center">
           <svg
@@ -1274,7 +1292,7 @@ export default function App() {
                 </div>
 
                 {/* Card stack */}
-                <div className="relative aspect-[4/3] w-full max-w-[90vw] overflow-visible">
+                <div className="relative aspect-[3/4] w-full max-w-[90vw] overflow-visible">
                   {steps.map((step, i) => (
                     <motion.div
                       key={step.id}

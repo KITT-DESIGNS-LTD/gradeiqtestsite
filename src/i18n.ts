@@ -81,9 +81,13 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     biology_def3: "controls what enters/leaves",
     biology_desc:
       "Grade IQ handles complex relational questions like matching and sorting by analyzing conceptual links rather than just text strings.",
+    physics_answer:
+      "Momentum is conserved because internal forces cancel (Newton's 3rd law). E.g. a 2kg ball at 3m/s hits a 1kg ball at rest — together they move at 2m/s, since 2×3 = (2+1)v, so v = 2m/s.",
     cs_question: "Recursion always requires a base case. True or false",
     cs_true: "True",
     cs_false: "False",
+    cs_desc:
+      "Grade IQ supports a wide variety of question types, including true/false.",
     default_desc:
       "Comprehensive coverage for {title} curricula. Grade IQ analyzes your existing materials to generate varied question types including multiple choice, long-form, and practical applications, all with automated grading rubrics.",
     import_upload_papers: "Upload Papers",
@@ -197,9 +201,13 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     biology_def3: "控制物質進出",
     biology_desc:
       "Grade IQ 透過分析概念連結處理配對與排序等複雜題型，而不僅是文字比對。",
+    physics_answer:
+      "當兩個物體碰撞並一起移動時，碰撞前的總動量等於碰撞後的總動量：m₁v₁ + m₂v₂ = (m₁+m₂)v'",
     cs_question: "遞迴一定需要基礎條件。對或錯？",
     cs_true: "對",
     cs_false: "錯",
+    cs_desc:
+      "Grade IQ 支援多種題型，包括是非題。",
     default_desc:
       "涵蓋 {title} 課程的完整內容。Grade IQ 會分析既有教材，生成多樣題型，包括選擇題、長答題與實作應用，並自動建立評分規準。",
     import_upload_papers: "上傳試卷",
@@ -313,9 +321,13 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     biology_def3: "控制物质进出",
     biology_desc:
       "Grade IQ 通过分析概念关联处理匹配与排序等复杂题型，而不只是文字匹配。",
+    physics_answer:
+      "当两个物体碰撞并一起运动时，碰撞前的总动量等于碰撞后的总动量：m₁v₁ + m₂v₂ = (m₁+m₂)v'",
     cs_question: "递归一定需要基础条件。对还是错？",
     cs_true: "对",
     cs_false: "错",
+    cs_desc:
+      "Grade IQ 支持多种题型，包括判断题。",
     default_desc:
       "全面覆盖 {title} 课程。Grade IQ 会分析现有材料，生成多样题型，包括选择题、长答题和实践应用，并自动生成评分标准。",
     import_upload_papers: "上传试卷",
@@ -433,9 +445,13 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     biology_def3: "điều khiển chất ra/vào",
     biology_desc:
       "Grade IQ xử lý các câu hỏi liên kết phức tạp bằng cách phân tích mối liên hệ khái niệm.",
+    physics_answer:
+      "Khi hai vật va chạm và dính vào nhau, tổng động lượng trước bằng tổng động lượng sau: m₁v₁ + m₂v₂ = (m₁+m₂)v'",
     cs_question: "Đệ quy luôn cần điều kiện dừng. Đúng hay sai?",
     cs_true: "Đúng",
     cs_false: "Sai",
+    cs_desc:
+      "Grade IQ hỗ trợ nhiều loại câu hỏi, bao gồm đúng/sai.",
     default_desc:
       "Bao phủ toàn diện chương trình {title}. Grade IQ phân tích tài liệu hiện có để tạo nhiều dạng câu hỏi, bao gồm trắc nghiệm, tự luận và ứng dụng thực tiễn, kèm rubric chấm điểm tự động.",
     import_upload_papers: "Tải đề lên",
@@ -553,9 +569,13 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     biology_def3: "контролирует вход/выход веществ",
     biology_desc:
       "Grade IQ обрабатывает сложные задания на сопоставление, анализируя концептуальные связи.",
+    physics_answer:
+      "При столкновении двух тел, движущихся вместе, общий импульс до столкновения равен общему импульсу после: m₁v₁ + m₂v₂ = (m₁+m₂)v'",
     cs_question: "Рекурсия всегда требует базового случая. Верно или неверно?",
     cs_true: "Верно",
     cs_false: "Неверно",
+    cs_desc:
+      "Grade IQ поддерживает множество типов вопросов, включая «верно/неверно».",
     default_desc:
       "Полное покрытие учебной программы по предмету {title}. Grade IQ анализирует материалы и генерирует разные типы вопросов, включая тестовые, развёрнутые и практические, с автоматическими рубриками оценки.",
     import_upload_papers: "Загрузить работы",
@@ -672,9 +692,13 @@ export const translations: Record<LanguageCode, Record<string, string>> = {
     biology_def3: "mengontrol keluar/masuknya zat",
     biology_desc:
       "Grade IQ menangani pertanyaan relasional yang kompleks seperti mencocokkan dan mengurutkan dengan menganalisis keterkaitan konsep.",
+    physics_answer:
+      "Ketika dua benda bertabrakan dan bergerak bersama, momentum total sebelum sama dengan momentum total sesudah: m₁v₁ + m₂v₂ = (m₁+m₂)v'",
     cs_question: "Rekursi selalu membutuhkan kasus dasar. Benar atau salah?",
     cs_true: "Benar",
     cs_false: "Salah",
+    cs_desc:
+      "Grade IQ mendukung berbagai jenis soal, termasuk benar/salah.",
     default_desc:
       "Cakupan menyeluruh untuk kurikulum {title}. Grade IQ menganalisis materi Anda dan menghasilkan berbagai jenis soal, termasuk pilihan ganda, esai panjang, dan aplikasi praktis, lengkap dengan rubrik penilaian otomatis.",
     import_upload_papers: "Unggah Soal",

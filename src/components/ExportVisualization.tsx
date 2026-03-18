@@ -41,7 +41,7 @@ export const ExportVisualization = ({
   ];
 
   return (
-    <div className="p-8 md:p-12 text-black font-['Prompt',sans-serif] h-full flex flex-col">
+    <div className="p-8 pb-10 md:p-12 md:pb-14 text-black font-['Prompt',sans-serif] h-full flex flex-col">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h4 className="text-xl font-bold mb-1">{t("export_title")}</h4>
