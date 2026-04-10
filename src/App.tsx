@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect, useMemo } from 'react';
 import { motion, useScroll, useTransform, useSpring, AnimatePresence, useInView, useMotionValue } from 'motion/react';
 import { Plus, ArrowRight, Menu, X } from 'lucide-react';
 import { Input } from "./components/ui/input";
@@ -873,6 +873,15 @@ import svgPathsPen from "./imports/svg-soah9mmirx";
 import { ImportVisualization } from "./components/ImportVisualization";
 import { GenerateVisualization } from "./components/GenerateVisualization";
 
+// Pen SVG geometry — see src/imports/svg-soah9mmirx.ts
+// viewBox is 0 0 1710.36 149.808; p32fa6980 (the barrel rect) ends at x ≈ 1524.37,
+// after which the connector + nib begin. We anchor the pen so this barrel-end
+// sits a fixed gap to the right of the longest rotated word's right edge.
+const PEN_VIEWBOX_W = 1710.36;
+const BARREL_END_VB_X = 1524.37;
+const BARREL_END_RATIO = BARREL_END_VB_X / PEN_VIEWBOX_W;
+const PEN_NIB_GAP_PX = 24;
+
 const WordRotator = ({
   t,
   headingFontFamily,
@@ -884,16 +893,22 @@ const WordRotator = ({
   heroScale: number;
   language: string;
 }) => {
-  const words = [
-    t("word_homework"),
-    t("word_assignments"),
-    t("word_exams"),
-    t("word_answers")
-  ];
+  const words = useMemo(
+    () => [
+      t("word_homework"),
+      t("word_assignments"),
+      t("word_exams"),
+      t("word_answers"),
+    ],
+    // t is closed over `language`, so language is the real dep
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [language]
+  );
   const [index, setIndex] = useState(0);
-  const measureRef = useRef<HTMLSpanElement>(null);
-  const [textWidth, setTextWidth] = useState(0);
-  const [showPen, setShowPen] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1450);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const measureRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const [penLeft, setPenLeft] = useState<number | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -904,51 +919,82 @@ const WordRotator = ({
 
   useLayoutEffect(() => {
     const measure = () => {
-      if (measureRef.current) {
-        setTextWidth(measureRef.current.getBoundingClientRect().width);
+      const widths = measureRefs.current.map(
+        (el) => el?.getBoundingClientRect().width ?? 0
+      );
+      const maxW = widths.length ? Math.max(...widths) : 0;
+
+      if (containerRef.current && svgRef.current) {
+        const containerW = containerRef.current.getBoundingClientRect().width;
+        const svgW = svgRef.current.getBoundingClientRect().width;
+        if (svgW > 0) {
+          // Place the SVG so its barrel-end (BARREL_END_RATIO * svgW from the SVG's
+          // left edge) lands a fixed gap to the right of the longest word.
+          setPenLeft(
+            containerW / 2 + maxW / 2 + PEN_NIB_GAP_PX - svgW * BARREL_END_RATIO
+          );
+        }
       }
-      setShowPen(window.innerWidth >= 1450);
     };
+
     measure();
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, [index, language, heroScale]);
+
+    // Re-measure once fonts have loaded — font swap can shift glyph metrics.
+    let cancelled = false;
+    if (typeof document !== "undefined" && (document as any).fonts?.ready) {
+      (document as any).fonts.ready.then(() => {
+        if (!cancelled) measure();
+      });
+    }
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("resize", measure);
+    };
+  }, [words, language, heroScale]);
 
   return (
-    <div className="relative flex items-center justify-center h-[110px] md:h-[180px] w-full max-w-full">
-      {/* Hidden measurement span */}
-      <span
-        ref={measureRef}
-        className="absolute top-0 left-0 invisible pointer-events-none font-['Anybody',sans-serif] font-black tracking-tighter whitespace-nowrap text-3xl sm:text-4xl md:text-8xl lg:text-9xl"
-        style={{ fontFamily: headingFontFamily, transform: `scale(${heroScale})` }}
-        aria-hidden="true"
-      >
-        {words[index]}
-      </span>
+    <div
+      ref={containerRef}
+      className="relative flex items-center justify-center h-[110px] md:h-[180px] w-full max-w-full"
+    >
+      {/* Hidden measurement spans — one per word so we can size the pen to the longest */}
+      {words.map((word, i) => (
+        <span
+          key={word}
+          ref={(el) => {
+            measureRefs.current[i] = el;
+          }}
+          className="absolute top-0 left-0 invisible pointer-events-none font-['Anybody',sans-serif] font-black tracking-tighter whitespace-nowrap text-3xl sm:text-4xl md:text-8xl lg:text-9xl"
+          style={{ fontFamily: headingFontFamily, transform: `scale(${heroScale})` }}
+          aria-hidden="true"
+        >
+          {word}
+        </span>
+      ))}
 
-      {/* Purple stripe background (below 1450px, replaces pen) */}
-      {!showPen && (
-        <div
-          className="absolute inset-y-[10%] bg-[#7C5DEC]"
-          style={{ left: '50%', right: '50%', marginLeft: '-50vw', marginRight: '-50vw' }}
-        />
-      )}
-
-      {/* The Pen/Bar (1450px+) */}
-      {showPen && (
-        <motion.div
+      {/* The Pen/Bar — anchored so its barrel-end sits just past the longest word.
+          The parent hero section has overflow-hidden, so at narrow viewports the
+          long barrel simply extends off-left and gets clipped. */}
+      <motion.div
           initial={{ x: "-100%" }}
           animate={{ x: "0%" }}
           transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           className="absolute inset-y-0 flex items-center pointer-events-none"
-          style={{ right: "10vw", marginTop: "8px" }}
+          style={{
+            left: penLeft ?? 0,
+            marginTop: "8px",
+            visibility: penLeft === null ? "hidden" : "visible",
+          }}
         >
         <div className="relative h-full w-full flex items-center">
           <svg
+            ref={svgRef}
             className="h-[120%] md:h-[150%] w-auto block overflow-visible"
             fill="none"
             viewBox="0 0 1710.36 149.808"
-            style={{ filter: "drop-shadow(0px 4px 20px rgba(0,0,0,0.05))", transform: "scale(1.10, 1.20)" }}
+            style={{ filter: "drop-shadow(0px 4px 20px rgba(0,0,0,0.05))", transform: "scale(1.10, 1.20)", transformOrigin: "left center" }}
           >
           <g id="Frame 39523">
             <g id="Vector">
@@ -974,7 +1020,6 @@ const WordRotator = ({
         </svg>
         </div>
       </motion.div>
-      )}
 
       {/* The Text - Centered over the bar */}
       <div className="relative z-10 w-full flex items-center justify-center">
