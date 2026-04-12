@@ -53,6 +53,7 @@ test.describe('Mobile responsiveness', () => {
         const visibleRight = Math.min(rect.right, window.innerWidth);
 
         return {
+          right: rect.right,
           visibleWidth: Math.max(visibleRight - visibleLeft, 0),
           rightGap: Math.max(window.innerWidth - rect.right, 0),
           viewportWidth: window.innerWidth,
@@ -92,15 +93,44 @@ test.describe('Mobile responsiveness', () => {
 
         return {
           barrelRight,
+          maxWordWidth,
           maxWordRight:
             containerRect.left +
             containerRect.width / 2 +
             visibleWordCenterShift +
-            maxWordWidth / 2,
+          maxWordWidth / 2,
         };
       }, BARREL_END_RATIO);
 
     expect(metrics.maxWordRight).toBeLessThanOrEqual(metrics.barrelRight - 8);
+  });
+
+  test('hero word stays centered on mobile', async ({ page }) => {
+    const metrics = await page
+      .locator('section')
+      .first()
+      .locator('svg[viewBox="0 0 1710.36 149.808"]')
+      .evaluate((element) => {
+        const container = element.parentElement?.parentElement?.parentElement;
+        const containerRect = container?.getBoundingClientRect();
+        const visibleWord = Array.from(container?.querySelectorAll('span') ?? []).find((span) => {
+          const style = window.getComputedStyle(span);
+          return style.visibility !== 'hidden' && span.getBoundingClientRect().width > 0;
+        });
+
+        if (!visibleWord || !containerRect) {
+          throw new Error('Visible hero word not found');
+        }
+
+        const wordRect = visibleWord.getBoundingClientRect();
+
+        return {
+          containerCenter: containerRect.left + containerRect.width / 2,
+          wordCenter: wordRect.left + wordRect.width / 2,
+        };
+      });
+
+    expect(Math.abs(metrics.wordCenter - metrics.containerCenter)).toBeLessThanOrEqual(6);
   });
 
   test('contact form controls stay compact on mobile', async ({ page }) => {
