@@ -33,8 +33,9 @@ const Navbar = ({
   setLanguage: (lang: LanguageCode) => void;
   t: (key: string, vars?: Record<string, string | number>) => string;
 }) => {
+  const isMobile = useIsMobile();
   const { scrollY } = useScroll();
-  const height = useTransform(scrollY, [0, 100], [100, 80]);
+  const height = useTransform(scrollY, [0, 100], isMobile ? [84, 72] : [100, 80]);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
   const [isGlobeHover, setIsGlobeHover] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -87,26 +88,116 @@ const Navbar = ({
     ["invert(0)", "invert(0)", "invert(1)"]
   );
 
+  const toggleLanguageMenu = () => {
+    setIsLanguageOpen((prev) => {
+      const next = !prev;
+      if (next) {
+        setIsMobileMenuOpen(false);
+      }
+      return next;
+    });
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen((prev) => {
+      const next = !prev;
+      if (next) {
+        setIsLanguageOpen(false);
+      }
+      return next;
+    });
+  };
+
   return (
     <motion.nav
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       style={{ height, backgroundColor: navBg, color: textColor }}
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 md:px-24 backdrop-blur-md border-b border-black/5 transition-all duration-200"
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-3 sm:px-8 md:px-24 backdrop-blur-md border-b border-black/5 transition-all duration-200"
     >
       <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
         <motion.img src={LogoSvg} alt="GRADE IQ" className="h-[32px] md:h-[40px]" style={{ filter: logoFilter }} />
       </div>
 
-      {/* Mobile hamburger */}
-      <button
-        className="md:hidden p-2 cursor-pointer bg-transparent border-none text-inherit"
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        aria-label="Toggle menu"
-      >
-        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+      <div className="flex items-center gap-1 md:hidden">
+        <div className="relative">
+          <button
+            type="button"
+            aria-label="Language"
+            aria-expanded={isLanguageOpen}
+            className="flex size-10 items-center justify-center rounded-full cursor-pointer border-none bg-transparent p-0 text-inherit"
+            onClick={toggleLanguageMenu}
+          >
+            <motion.img
+              src={GlobeSvg}
+              alt=""
+              className="block"
+              style={{
+                width: 22,
+                height: 22,
+                filter: isLanguageOpen ? globeActiveFilter : globeFilter
+              }}
+            />
+          </button>
+
+          <AnimatePresence>
+            {isLanguageOpen && (
+              <>
+                <div
+                  className="fixed inset-0"
+                  style={{ zIndex: 9999 }}
+                  onClick={() => setIsLanguageOpen(false)}
+                />
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.96 }}
+                  className="absolute right-0 top-full mt-3 w-[76px] bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden flex flex-col gap-1"
+                  style={{ padding: "2px", zIndex: 10000 }}
+                >
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        setLanguage(lang.code);
+                        setIsLanguageOpen(false);
+                      }}
+                      aria-label={lang.label}
+                      style={{ paddingInline: "10px", cursor: "pointer" }}
+                      className={`w-full h-10 transition-colors flex items-center justify-center rounded-lg border border-transparent cursor-pointer
+                        ${language === lang.code ? 'bg-[#7C5DED]/10 border-[#7C5DED]/20' : 'bg-transparent hover:bg-[#efeff6]'}
+                      `}
+                    >
+                      <img
+                        src={lang.flagSrc}
+                        alt={lang.flagAlt}
+                        className="shrink-0 object-contain"
+                        style={{
+                          width: 38,
+                          height: 28,
+                          maxWidth: "none",
+                          maxHeight: "none"
+                        }}
+                      />
+                    </button>
+                  ))}
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="flex size-10 items-center justify-center cursor-pointer bg-transparent border-none p-0 text-inherit"
+          onClick={toggleMobileMenu}
+          aria-label="Toggle menu"
+          aria-expanded={isMobileMenuOpen}
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
 
       {/* Mobile menu overlay */}
       <AnimatePresence>
@@ -146,23 +237,6 @@ const Navbar = ({
             >
               {t("nav_demo")} <ArrowRight size={18} />
             </a>
-            <div className="flex items-center gap-2 mt-2">
-              {languages.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => {
-                    setLanguage(lang.code);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  aria-label={lang.label}
-                  className={`w-10 h-10 flex items-center justify-center rounded-lg border cursor-pointer
-                    ${language === lang.code ? 'bg-[#7C5DED]/10 border-[#7C5DED]/20' : 'bg-transparent border-transparent hover:bg-gray-100'}
-                  `}
-                >
-                  <img src={lang.flagSrc} alt={lang.flagAlt} className="w-7 h-5 object-contain" />
-                </button>
-              ))}
-            </div>
           </motion.div>
         )}
       </AnimatePresence>

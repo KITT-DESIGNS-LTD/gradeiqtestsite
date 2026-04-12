@@ -9,12 +9,30 @@ test.describe('Mobile responsiveness', () => {
   });
 
   test('hamburger menu is visible on mobile', async ({ page }) => {
-    const hamburger = page.locator('nav button.md\\:hidden');
+    const hamburger = page.getByRole('button', { name: 'Toggle menu' });
     await expect(hamburger).toBeVisible();
   });
 
+  test('mobile header keeps compact padding and shows a separate language trigger', async ({ page }) => {
+    const navMetrics = await page.locator('nav').evaluate((element) => {
+      const style = window.getComputedStyle(element);
+      return {
+        paddingLeft: parseFloat(style.paddingLeft),
+        paddingRight: parseFloat(style.paddingRight),
+      };
+    });
+
+    expect(navMetrics.paddingLeft).toBeLessThanOrEqual(12);
+    expect(navMetrics.paddingRight).toBeLessThanOrEqual(12);
+
+    const languageButton = page.getByRole('button', { name: 'Language' });
+    await expect(languageButton).toBeVisible();
+    await languageButton.click();
+    await expect(page.getByRole('button', { name: 'English' })).toBeVisible();
+  });
+
   test('mobile menu opens and shows demo link', async ({ page }) => {
-    const hamburger = page.locator('nav button.md\\:hidden');
+    const hamburger = page.getByRole('button', { name: 'Toggle menu' });
     await hamburger.click();
     // Select the demo link visible in the mobile overlay
     const demoLinks = page.locator('a[href="https://demo.gradeiq.org/login"]');
@@ -29,6 +47,12 @@ test.describe('Mobile responsiveness', () => {
       }
     }
     expect(foundVisible).toBe(true);
+  });
+
+  test('mobile hamburger menu does not include language options', async ({ page }) => {
+    const hamburger = page.getByRole('button', { name: 'Toggle menu' });
+    await hamburger.click();
+    await expect(page.getByRole('button', { name: 'English' })).toHaveCount(0);
   });
 
   test('no horizontal overflow on mobile', async ({ page }) => {
