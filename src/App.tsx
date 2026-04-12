@@ -881,17 +881,22 @@ const PEN_VIEWBOX_W = 1710.36;
 const BARREL_END_VB_X = 1524.37;
 const BARREL_END_RATIO = BARREL_END_VB_X / PEN_VIEWBOX_W;
 const PEN_NIB_GAP_PX = 75;
+const MOBILE_PEN_NIB_GAP_PX = 56;
+const MOBILE_PEN_LEFT_SHIFT_PX = -108;
+const MOBILE_WORD_SHIFT_PX = -64;
 
 const WordRotator = ({
   t,
   headingFontFamily,
   heroScale,
-  language
+  language,
+  isMobile,
 }: {
   t: (key: string, vars?: Record<string, string | number>) => string;
   headingFontFamily: string;
   heroScale: number;
   language: string;
+  isMobile: boolean;
 }) => {
   const words = useMemo(
     () => [
@@ -909,6 +914,16 @@ const WordRotator = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const measureRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [penLeft, setPenLeft] = useState<number | null>(null);
+  const penGapPx = isMobile ? MOBILE_PEN_NIB_GAP_PX : PEN_NIB_GAP_PX;
+  const penLeftShiftPx = isMobile ? MOBILE_PEN_LEFT_SHIFT_PX : 0;
+  const wordShiftPx = isMobile ? MOBILE_WORD_SHIFT_PX : 0;
+  const penMarginTop = isMobile ? "4px" : "8px";
+  const penSvgClassName = isMobile
+    ? "h-[108%] md:h-[150%] w-auto block overflow-visible"
+    : "h-[120%] md:h-[150%] w-auto block overflow-visible";
+  const penTransform = isMobile
+    ? "scale(0.92, 1.08)"
+    : "scale(1.10, 1.20)";
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -931,7 +946,7 @@ const WordRotator = ({
           // Place the SVG so its barrel-end (BARREL_END_RATIO * svgW from the SVG's
           // left edge) lands a fixed gap to the right of the longest word.
           setPenLeft(
-            containerW / 2 + maxW / 2 + PEN_NIB_GAP_PX - svgW * BARREL_END_RATIO
+            containerW / 2 + maxW / 2 + penGapPx + penLeftShiftPx - svgW * BARREL_END_RATIO
           );
         }
       }
@@ -952,7 +967,7 @@ const WordRotator = ({
       cancelled = true;
       window.removeEventListener("resize", measure);
     };
-  }, [words, language, heroScale]);
+  }, [words, language, heroScale, penGapPx, penLeftShiftPx]);
 
   return (
     <div
@@ -984,17 +999,21 @@ const WordRotator = ({
           className="absolute inset-y-0 flex items-center pointer-events-none"
           style={{
             left: penLeft ?? 0,
-            marginTop: "8px",
+            marginTop: penMarginTop,
             visibility: penLeft === null ? "hidden" : "visible",
           }}
         >
         <div className="relative h-full w-full flex items-center">
           <svg
             ref={svgRef}
-            className="h-[120%] md:h-[150%] w-auto block overflow-visible"
+            className={penSvgClassName}
             fill="none"
             viewBox="0 0 1710.36 149.808"
-            style={{ filter: "drop-shadow(0px 4px 20px rgba(0,0,0,0.05))", transform: "scale(1.10, 1.20)", transformOrigin: "left center" }}
+            style={{
+              filter: "drop-shadow(0px 4px 20px rgba(0,0,0,0.05))",
+              transform: penTransform,
+              transformOrigin: "left center",
+            }}
           >
           <g id="Frame 39523">
             <g id="Vector">
@@ -1024,18 +1043,20 @@ const WordRotator = ({
       {/* The Text - Centered over the bar */}
       <div className="relative z-10 w-full flex items-center justify-center">
         <AnimatePresence mode="wait">
-          <div style={{ transform: `scale(${heroScale})`, transformOrigin: "center" }}>
-            <motion.span
-              key={words[index]}
-              initial={{ y: 40, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -40, opacity: 0 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="font-['Anybody',sans-serif] font-black tracking-tighter text-white whitespace-nowrap block text-3xl sm:text-4xl md:text-8xl lg:text-9xl"
-              style={{ fontFamily: headingFontFamily }}
-            >
-              {words[index]}
-            </motion.span>
+          <div style={{ transform: `translateX(${wordShiftPx}px)` }}>
+            <div style={{ transform: `scale(${heroScale})`, transformOrigin: "center" }}>
+              <motion.span
+                key={words[index]}
+                initial={{ y: 40, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -40, opacity: 0 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="font-['Anybody',sans-serif] font-black tracking-tighter text-white whitespace-nowrap block text-3xl sm:text-4xl md:text-8xl lg:text-9xl"
+                style={{ fontFamily: headingFontFamily }}
+              >
+                {words[index]}
+              </motion.span>
+            </div>
           </div>
         </AnimatePresence>
       </div>
@@ -1178,7 +1199,13 @@ export default function App() {
               </motion.h1>
             </div>
 
-            <WordRotator t={t} headingFontFamily={headingFontFamily} heroScale={heroScale} language={language} />
+            <WordRotator
+              t={t}
+              headingFontFamily={headingFontFamily}
+              heroScale={heroScale}
+              language={language}
+              isMobile={isMobile}
+            />
 
             {!language.startsWith("zh") && (
               <div style={{ transform: `scale(${heroScale})`, transformOrigin: "center" }}>

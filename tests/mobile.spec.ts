@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 
+const BARREL_END_RATIO = 1524.37 / 1710.36;
+
 test.describe('Mobile responsiveness', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -38,6 +40,67 @@ test.describe('Mobile responsiveness', () => {
   test('desktop nav is hidden on mobile', async ({ page }) => {
     const desktopNav = page.locator('nav .hidden.md\\:flex');
     await expect(desktopNav).toBeHidden();
+  });
+
+  test('hero pen stays smaller and offset left on mobile', async ({ page }) => {
+    const penMetrics = await page
+      .locator('section')
+      .first()
+      .locator('svg[viewBox="0 0 1710.36 149.808"]')
+      .evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        const visibleLeft = Math.max(rect.left, 0);
+        const visibleRight = Math.min(rect.right, window.innerWidth);
+
+        return {
+          visibleWidth: Math.max(visibleRight - visibleLeft, 0),
+          rightGap: Math.max(window.innerWidth - rect.right, 0),
+          viewportWidth: window.innerWidth,
+        };
+      });
+
+    expect(penMetrics.visibleWidth).toBeLessThanOrEqual(penMetrics.viewportWidth - 2);
+    expect(penMetrics.rightGap).toBeGreaterThanOrEqual(2);
+  });
+
+  test('hero word stays inside the purple bar on mobile', async ({ page }) => {
+    const metrics = await page
+      .locator('section')
+      .first()
+      .locator('svg[viewBox="0 0 1710.36 149.808"]')
+      .evaluate((element, barrelEndRatio) => {
+        const svgRect = element.getBoundingClientRect();
+        const barrelRight = svgRect.left + svgRect.width * barrelEndRatio;
+        const container = element.parentElement?.parentElement?.parentElement;
+        const containerRect = container?.getBoundingClientRect();
+        const spans = Array.from(container?.querySelectorAll('span') ?? []);
+        const visibleWord = spans.find((span) => {
+          const style = window.getComputedStyle(span);
+          return style.visibility !== 'hidden' && span.getBoundingClientRect().width > 0;
+        });
+
+        if (!visibleWord || !containerRect) {
+          throw new Error('Visible hero word not found');
+        }
+
+        const wordRect = visibleWord.getBoundingClientRect();
+        const visibleWordCenterShift =
+          wordRect.left + wordRect.width / 2 - (containerRect.left + containerRect.width / 2);
+        const maxWordWidth = spans.reduce((maxWidth, span) => {
+          return Math.max(maxWidth, span.getBoundingClientRect().width);
+        }, 0);
+
+        return {
+          barrelRight,
+          maxWordRight:
+            containerRect.left +
+            containerRect.width / 2 +
+            visibleWordCenterShift +
+            maxWordWidth / 2,
+        };
+      }, BARREL_END_RATIO);
+
+    expect(metrics.maxWordRight).toBeLessThanOrEqual(metrics.barrelRight - 8);
   });
 
   test('contact form controls stay compact on mobile', async ({ page }) => {
