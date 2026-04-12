@@ -880,7 +880,7 @@ import { GenerateVisualization } from "./components/GenerateVisualization";
 const PEN_VIEWBOX_W = 1710.36;
 const BARREL_END_VB_X = 1524.37;
 const BARREL_END_RATIO = BARREL_END_VB_X / PEN_VIEWBOX_W;
-const PEN_NIB_GAP_PX = 65;
+const PEN_NIB_GAP_PX = 75;
 
 const WordRotator = ({
   t,
@@ -1492,7 +1492,7 @@ export default function App() {
       {/* Contact Section */}
       <section
         id="contact-section"
-        className={`py-16 md:py-32 px-4 sm:px-6 md:px-24 overflow-hidden ${isMobile ? 'bg-[#19191b] text-white' : ''}`}
+        className={`py-16 md:py-32 px-6 sm:px-8 md:px-24 overflow-hidden ${isMobile ? 'bg-[#19191b] text-white' : ''}`}
       >
         <div className="max-w-4xl mx-auto">
           <motion.div
@@ -1500,7 +1500,7 @@ export default function App() {
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-center mb-16"
+            className="text-center mb-12 md:mb-16"
           >
             <h2
               className="font-['Anybody',sans-serif] font-black text-3xl sm:text-5xl md:text-7xl mb-6 uppercase tracking-tight"
@@ -1508,7 +1508,9 @@ export default function App() {
             >
               {t("contact_title")}
             </h2>
-            <p className="font-['Prompt',sans-serif] text-xl opacity-60">{t("contact_subtitle")}</p>
+            <p className="font-['Prompt',sans-serif] text-base sm:text-lg md:text-xl opacity-60">
+              {t("contact_subtitle")}
+            </p>
           </motion.div>
 
           <motion.form
@@ -1516,50 +1518,58 @@ export default function App() {
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
             action="https://formsubmit.co/1908a6031b4aa69ba79f51d330466ff1"
             method="POST"
           >
             <input type="hidden" name="_subject" value="New Contact Form Submission" />
             <input type="hidden" name="_captcha" value="false" />
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-lg font-['Prompt',sans-serif] opacity-80">{t("contact_name")}</Label>
+              <Label htmlFor="name" className="text-sm md:text-lg font-['Prompt',sans-serif] opacity-80">
+                {t("contact_name")}
+              </Label>
               <Input
                 id="name"
                 name="name"
                 placeholder={t("contact_name_placeholder")}
                 required
-                className="h-16 bg-white/5 border-white/10 text-xl px-6 focus:border-white/40 transition-colors"
+                className="h-14 md:h-16 bg-white/5 border-white/10 text-base md:text-xl px-4 md:px-6 focus:border-white/40 transition-colors"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-lg font-['Prompt',sans-serif] opacity-80">{t("contact_email")}</Label>
+              <Label htmlFor="email" className="text-sm md:text-lg font-['Prompt',sans-serif] opacity-80">
+                {t("contact_email")}
+              </Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
                 placeholder={t("contact_email_placeholder")}
                 required
-                className="h-16 bg-white/5 border-white/10 text-xl px-6 focus:border-white/40 transition-colors"
+                className="h-14 md:h-16 bg-white/5 border-white/10 text-base md:text-xl px-4 md:px-6 focus:border-white/40 transition-colors"
               />
             </div>
             <div className="md:col-span-2 space-y-2">
-              <Label htmlFor="company" className="text-lg font-['Prompt',sans-serif] opacity-80">{t("contact_company")}</Label>
+              <Label htmlFor="company" className="text-sm md:text-lg font-['Prompt',sans-serif] opacity-80">
+                {t("contact_company")}
+              </Label>
               <Input
                 id="company"
                 name="company"
                 placeholder={t("contact_company_placeholder")}
-                className="h-16 bg-white/5 border-white/10 text-xl px-6 focus:border-white/40 transition-colors"
+                className="h-14 md:h-16 bg-white/5 border-white/10 text-base md:text-xl px-4 md:px-6 focus:border-white/40 transition-colors"
               />
             </div>
             <div className="md:col-span-2 space-y-2">
-              <Label htmlFor="message" className="text-lg font-['Prompt',sans-serif] opacity-80">{t("contact_message")}</Label>
+              <Label htmlFor="message" className="text-sm md:text-lg font-['Prompt',sans-serif] opacity-80">
+                {t("contact_message")}
+              </Label>
               <Textarea
                 id="message"
                 name="message"
                 placeholder={t("contact_message_placeholder")}
                 required
-                className="min-h-40 bg-white/5 border-white/10 text-xl p-6 focus:border-white/40 transition-colors"
+                className="min-h-32 md:min-h-40 bg-white/5 border-white/10 text-base md:text-xl p-4 md:p-6 focus:border-white/40 transition-colors"
               />
             </div>
             <div className="md:col-span-2 pt-4 flex justify-center">
@@ -1568,7 +1578,7 @@ export default function App() {
                 initial="initial"
                 whileHover="hover"
                 whileTap={{ scale: 0.98 }}
-                className="relative bg-white text-[#19191b] px-10 py-5 rounded-full font-['Prompt',sans-serif] font-medium text-xl cursor-pointer overflow-hidden group"
+                className="relative bg-white text-[#19191b] px-8 md:px-10 py-3.5 md:py-5 rounded-full font-['Prompt',sans-serif] font-medium text-base md:text-xl cursor-pointer overflow-hidden group"
               >
                 <motion.div 
                   variants={{
