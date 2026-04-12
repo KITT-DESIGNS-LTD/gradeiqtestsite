@@ -915,7 +915,7 @@ const WordRotator = ({
   const [penLeft, setPenLeft] = useState<number | null>(null);
   const penGapPx = isMobile ? MOBILE_PEN_NIB_GAP_PX : PEN_NIB_GAP_PX;
   const penLeftShiftPx = isMobile ? MOBILE_PEN_LEFT_SHIFT_PX : 0;
-  const penMarginTop = isMobile ? "4px" : "8px";
+  const penMarginTop = isMobile ? "2px" : "8px";
   const penSvgClassName = isMobile
     ? "h-[96%] md:h-[150%] w-auto block overflow-visible"
     : "h-[120%] md:h-[150%] w-auto block overflow-visible";
@@ -973,7 +973,7 @@ const WordRotator = ({
   return (
     <div
       ref={containerRef}
-      className="relative flex items-center justify-center h-[110px] md:h-[180px] w-full max-w-full"
+      className="relative flex items-center justify-center h-[92px] md:h-[180px] w-full max-w-full"
     >
       {/* Hidden measurement spans — one per word so we can size the pen to the longest */}
       {words.map((word, i) => (
@@ -1185,7 +1185,11 @@ export default function App() {
       <section className="pt-28 md:pt-40 pb-10 md:pb-20 max-w-auto mx-auto text-center overflow-hidden px-4 md:px-0">
         <div className="flex flex-col items-center">
           {/* Headline */}
-          <div className={`relative flex flex-col items-center w-full ${isVietnamese ? "gap-6" : "gap-4"}`}>
+          <div
+            className={`relative flex flex-col items-center w-full ${
+              isVietnamese ? "gap-4 md:gap-6" : "gap-2 md:gap-4"
+            }`}
+          >
             <div style={{ transform: `scale(${heroScale})`, transformOrigin: "center" }}>
               <motion.h1
                 initial={{ y: 16, opacity: 0 }}

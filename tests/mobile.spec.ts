@@ -122,30 +122,44 @@ test.describe('Mobile responsiveness', () => {
 
   test('hero word stays centered on mobile', async ({ page }) => {
     const metrics = await page
-      .locator('section')
-      .first()
-      .locator('svg[viewBox="0 0 1710.36 149.808"]')
-      .evaluate((element) => {
-        const container = element.parentElement?.parentElement?.parentElement;
+      .evaluate(() => {
+        const generate = Array.from(document.querySelectorAll('h1')).find((el) =>
+          el.textContent?.includes('GENERATE'),
+        );
+        const instantly = Array.from(document.querySelectorAll('h1')).find((el) =>
+          el.textContent?.includes('INSTANTLY'),
+        );
+        const svg = document.querySelector('svg[viewBox="0 0 1710.36 149.808"]');
+        const container = svg?.parentElement?.parentElement?.parentElement;
         const containerRect = container?.getBoundingClientRect();
         const visibleWord = Array.from(container?.querySelectorAll('span') ?? []).find((span) => {
           const style = window.getComputedStyle(span);
           return style.visibility !== 'hidden' && span.getBoundingClientRect().width > 0;
         });
 
-        if (!visibleWord || !containerRect) {
-          throw new Error('Visible hero word not found');
+        if (!generate || !instantly || !svg || !visibleWord || !containerRect) {
+          throw new Error('Visible hero nodes not found');
         }
 
+        const generateRect = generate.getBoundingClientRect();
+        const instantlyRect = instantly.getBoundingClientRect();
+        const svgRect = svg.getBoundingClientRect();
         const wordRect = visibleWord.getBoundingClientRect();
 
         return {
           containerCenter: containerRect.left + containerRect.width / 2,
           wordCenter: wordRect.left + wordRect.width / 2,
+          generateToPen: svgRect.top - generateRect.bottom,
+          penToInstantly: instantlyRect.top - svgRect.bottom,
+          wordTopInset: wordRect.top - svgRect.top,
+          wordBottomInset: svgRect.bottom - wordRect.bottom,
         };
       });
 
     expect(Math.abs(metrics.wordCenter - metrics.containerCenter)).toBeLessThanOrEqual(6);
+    expect(metrics.generateToPen).toBeLessThanOrEqual(40);
+    expect(metrics.penToInstantly).toBeLessThanOrEqual(40);
+    expect(metrics.wordBottomInset - metrics.wordTopInset).toBeLessThanOrEqual(2.5);
   });
 
   test('contact form controls stay compact on mobile', async ({ page }) => {
