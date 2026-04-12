@@ -885,8 +885,9 @@ const BARREL_END_RATIO = BARREL_END_VB_X / PEN_VIEWBOX_W;
 const PEN_NIB_GAP_PX = 75;
 const MOBILE_PEN_NIB_GAP_PX = 56;
 const MOBILE_PEN_LEFT_SHIFT_PX = -42;
-const MOBILE_PEN_BARREL_SCALE_Y = 1.08;
-const MOBILE_PEN_CONNECTOR_SCALE_Y = 1.06;
+const MOBILE_PEN_BARREL_SCALE_Y = 1.22;
+const MOBILE_PEN_CONNECTOR_SCALE_Y = 1.14;
+const MOBILE_PEN_ROW_OFFSET_PX = 3;
 
 const WordRotator = ({
   t,
@@ -919,7 +920,11 @@ const WordRotator = ({
   const [penLeft, setPenLeft] = useState<number | null>(null);
   const penGapPx = isMobile ? MOBILE_PEN_NIB_GAP_PX : PEN_NIB_GAP_PX;
   const penLeftShiftPx = isMobile ? MOBILE_PEN_LEFT_SHIFT_PX : 0;
-  const penMarginTop = isMobile ? "2px" : "8px";
+  const penRowOffsetPx = isMobile ? MOBILE_PEN_ROW_OFFSET_PX : 0;
+  const penMarginTop = isMobile ? `${1 + penRowOffsetPx}px` : "8px";
+  const rotatingWordOffsetStyle = penRowOffsetPx
+    ? { marginTop: `${penRowOffsetPx}px` }
+    : undefined;
   const penSvgClassName = isMobile
     ? "h-[96%] md:h-[150%] w-auto block overflow-visible"
     : "h-[120%] md:h-[150%] w-auto block overflow-visible";
@@ -983,7 +988,7 @@ const WordRotator = ({
   return (
     <div
       ref={containerRef}
-      className="relative flex items-center justify-center h-[86px] md:h-[180px] w-full max-w-full"
+      className="relative flex items-center justify-center h-[81px] md:h-[180px] w-full max-w-full"
     >
       {/* Hidden measurement spans — one per word so we can size the pen to the longest */}
       {words.map((word, i) => (
@@ -1056,7 +1061,10 @@ const WordRotator = ({
       </motion.div>
 
       {/* The Text - Centered over the bar */}
-      <div className="relative z-10 w-full flex items-center justify-center">
+      <div
+        className="relative z-10 w-full flex items-center justify-center"
+        style={rotatingWordOffsetStyle}
+      >
         <AnimatePresence mode="wait">
           <div style={{ transform: `scale(${heroScale})`, transformOrigin: "center" }}>
             <motion.span

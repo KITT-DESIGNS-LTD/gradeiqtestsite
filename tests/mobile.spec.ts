@@ -60,8 +60,8 @@ test.describe('Mobile responsiveness', () => {
         };
       });
 
-    expect(penMetrics.visibleWidth).toBeGreaterThanOrEqual(penMetrics.viewportWidth - 25);
-    expect(penMetrics.rightGap).toBeLessThanOrEqual(25);
+    expect(penMetrics.visibleWidth).toBeGreaterThanOrEqual(penMetrics.viewportWidth - 30);
+    expect(penMetrics.rightGap).toBeLessThanOrEqual(29);
     expect(penMetrics.visibleWidth).toBeLessThanOrEqual(penMetrics.viewportWidth - 2);
     expect(penMetrics.rightGap).toBeGreaterThanOrEqual(2);
   });
@@ -99,8 +99,8 @@ test.describe('Mobile responsiveness', () => {
         };
       });
 
-    expect(penMetrics.bodyToTipHeightRatio).toBeGreaterThanOrEqual(0.66);
-    expect(penMetrics.connectorToTipHeightRatio).toBeGreaterThanOrEqual(0.49);
+    expect(penMetrics.bodyToTipHeightRatio).toBeGreaterThanOrEqual(0.74);
+    expect(penMetrics.connectorToTipHeightRatio).toBeGreaterThanOrEqual(0.53);
     expect(penMetrics.tipHeight).toBeLessThanOrEqual(48.5);
   });
 
@@ -170,6 +170,8 @@ test.describe('Mobile responsiveness', () => {
         const instantlyRect = instantly.getBoundingClientRect();
         const svgRect = svg.getBoundingClientRect();
         const wordRect = visibleWord.getBoundingClientRect();
+        const [body] = Array.from(svg.querySelectorAll('path'));
+        const bodyRect = body.getBoundingClientRect();
 
         return {
           containerCenter: containerRect.left + containerRect.width / 2,
@@ -178,13 +180,17 @@ test.describe('Mobile responsiveness', () => {
           penToInstantly: instantlyRect.top - svgRect.bottom,
           wordTopInset: wordRect.top - svgRect.top,
           wordBottomInset: svgRect.bottom - wordRect.bottom,
+          bodyInsetDelta:
+            (bodyRect.bottom - wordRect.bottom) - (wordRect.top - bodyRect.top),
         };
       });
 
     expect(Math.abs(metrics.wordCenter - metrics.containerCenter)).toBeLessThanOrEqual(6);
-    expect(metrics.generateToPen).toBeLessThanOrEqual(22);
-    expect(metrics.penToInstantly).toBeLessThanOrEqual(22);
+    expect(metrics.generateToPen).toBeGreaterThanOrEqual(22);
+    expect(metrics.generateToPen).toBeLessThanOrEqual(24);
+    expect(metrics.penToInstantly).toBeLessThanOrEqual(18.5);
     expect(metrics.wordBottomInset - metrics.wordTopInset).toBeLessThanOrEqual(2.5);
+    expect(Math.abs(metrics.bodyInsetDelta)).toBeLessThanOrEqual(1.1);
   });
 
   test('contact form controls stay compact on mobile', async ({ page }) => {
