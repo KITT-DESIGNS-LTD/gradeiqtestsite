@@ -920,7 +920,7 @@ const WordRotator = ({
     ? "h-[96%] md:h-[150%] w-auto block overflow-visible"
     : "h-[120%] md:h-[150%] w-auto block overflow-visible";
   const penTransform = isMobile
-    ? "scale(0.50, 1.00)"
+    ? "scale(0.50)"
     : "scale(1.10, 1.20)";
   const rotatingWordClassName = isMobile
     ? "font-['Anybody',sans-serif] font-black tracking-tighter whitespace-nowrap text-[1.7rem] sm:text-4xl md:text-8xl lg:text-9xl"

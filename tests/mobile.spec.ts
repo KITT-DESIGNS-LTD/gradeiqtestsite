@@ -64,6 +64,21 @@ test.describe('Mobile responsiveness', () => {
     expect(penMetrics.rightGap).toBeGreaterThanOrEqual(2);
   });
 
+  test('hero pen keeps its proportions on mobile', async ({ page }) => {
+    const penMetrics = await page
+      .locator('section')
+      .first()
+      .locator('svg[viewBox="0 0 1710.36 149.808"]')
+      .evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+          aspectRatio: rect.width / rect.height,
+        };
+      });
+
+    expect(penMetrics.aspectRatio).toBeGreaterThanOrEqual(8.5);
+  });
+
   test('hero word stays inside the purple bar on mobile', async ({ page }) => {
     const metrics = await page
       .locator('section')
