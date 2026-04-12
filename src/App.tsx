@@ -40,7 +40,6 @@ const Navbar = ({
   const [isGlobeHover, setIsGlobeHover] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const desktopLanguageDropdownOffsetX = 4;
-  const mobileLanguageDropdownOffsetX = -8;
 
   const languages = [
     { code: "en" as LanguageCode, label: "English", flagSrc: FlagHM, flagAlt: "UK" },
@@ -151,11 +150,11 @@ const Navbar = ({
                   onClick={() => setIsLanguageOpen(false)}
                 />
                 <motion.div
-                  initial={{ opacity: 0, y: 10, scale: 0.96, x: mobileLanguageDropdownOffsetX }}
-                  animate={{ opacity: 1, y: 0, scale: 1, x: mobileLanguageDropdownOffsetX }}
-                  exit={{ opacity: 0, y: 10, scale: 0.96, x: mobileLanguageDropdownOffsetX }}
-                  className="absolute right-0 top-full mt-3 w-[76px] bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden flex flex-col gap-1"
-                  style={{ padding: "2px", zIndex: 10000 }}
+                  initial={{ opacity: 0, y: 10, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.96 }}
+                  className="absolute left-1/2 top-full mt-3 w-[76px] bg-white rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden flex flex-col gap-1"
+                  style={{ translateX: "-50%", padding: "2px", zIndex: 10000 }}
                 >
                   {languages.map((lang) => (
                     <button

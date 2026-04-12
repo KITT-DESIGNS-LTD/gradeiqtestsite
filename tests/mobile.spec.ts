@@ -31,7 +31,7 @@ test.describe('Mobile responsiveness', () => {
     await expect(page.getByRole('button', { name: 'English' })).toBeVisible();
   });
 
-  test('mobile language menu sits slightly left of the trigger', async ({ page }) => {
+  test('mobile language menu stays centered under the trigger', async ({ page }) => {
     const languageButton = page.getByRole('button', { name: 'Language' });
     await languageButton.click();
 
@@ -62,7 +62,7 @@ test.describe('Mobile responsiveness', () => {
       };
     });
 
-    expect(alignment.centerDelta).toBeLessThanOrEqual(-21);
+    expect(Math.abs(alignment.centerDelta)).toBeLessThanOrEqual(4);
   });
 
   test('mobile menu opens and shows demo link', async ({ page }) => {
