@@ -304,4 +304,54 @@ test.describe('Mobile responsiveness', () => {
     expect(buttonMetrics.paddingTop).toBeLessThanOrEqual(16);
     expect(buttonMetrics.paddingBottom).toBeLessThanOrEqual(16);
   });
+
+  test('how it works generate card keeps its footer inside the white card on mobile', async ({ page }) => {
+    await page.evaluate(() => {
+      const scrollContainer = document.querySelector('#how-it-works > div');
+
+      if (!(scrollContainer instanceof HTMLElement)) {
+        throw new Error('How it works scroll container not found');
+      }
+
+      const rect = scrollContainer.getBoundingClientRect();
+      const containerTop = rect.top + window.scrollY;
+      const scrollRange = scrollContainer.offsetHeight - window.innerHeight;
+
+      window.scrollTo({
+        top: containerTop + 0.56 * scrollRange,
+        behavior: 'auto',
+      });
+    });
+
+    await page.waitForTimeout(700);
+
+    const metrics = await page.evaluate(() => {
+      const heading = Array.from(document.querySelectorAll('#how-it-works h3')).find((element) =>
+        element.textContent?.includes('Generate New Paper'),
+      );
+      const footerLabel = Array.from(document.querySelectorAll('#how-it-works span')).find(
+        (element) => element.textContent?.trim() === 'Total Questions',
+      );
+
+      if (!(heading instanceof HTMLElement) || !(footerLabel instanceof HTMLElement)) {
+        throw new Error('Generate card content not found');
+      }
+
+      const cardContent = heading.parentElement?.parentElement;
+      const footerBadge = footerLabel.parentElement;
+
+      if (!(cardContent instanceof HTMLElement) || !(footerBadge instanceof HTMLElement)) {
+        throw new Error('Generate card structure not found');
+      }
+
+      const cardRect = cardContent.getBoundingClientRect();
+      const footerRect = footerBadge.getBoundingClientRect();
+
+      return {
+        footerOverflow: footerRect.bottom - cardRect.bottom,
+      };
+    });
+
+    expect(metrics.footerOverflow).toBeLessThanOrEqual(0);
+  });
 });
