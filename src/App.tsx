@@ -880,7 +880,7 @@ import { GenerateVisualization } from "./components/GenerateVisualization";
 const PEN_VIEWBOX_W = 1710.36;
 const BARREL_END_VB_X = 1524.37;
 const BARREL_END_RATIO = BARREL_END_VB_X / PEN_VIEWBOX_W;
-const PEN_NIB_GAP_PX = 24;
+const PEN_NIB_GAP_PX = 65;
 
 const WordRotator = ({
   t,
