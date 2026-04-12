@@ -1457,7 +1457,7 @@ export default function App() {
                 </div>
 
                 {/* Card stack */}
-                <div className="relative aspect-[3/4] w-full max-w-[90vw] overflow-visible">
+                <div className="relative aspect-[7/10] w-full max-w-[90vw] overflow-visible">
                   {steps.map((step, i) => (
                     <motion.div
                       key={step.id}

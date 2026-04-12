@@ -305,7 +305,7 @@ test.describe('Mobile responsiveness', () => {
     expect(buttonMetrics.paddingBottom).toBeLessThanOrEqual(16);
   });
 
-  test('how it works generate card keeps its footer inside the white card on mobile', async ({ page }) => {
+  test('how it works generate card keeps the final question row fully visible on mobile', async ({ page }) => {
     await page.evaluate(() => {
       const scrollContainer = document.querySelector('#how-it-works > div');
 
@@ -326,32 +326,29 @@ test.describe('Mobile responsiveness', () => {
     await page.waitForTimeout(700);
 
     const metrics = await page.evaluate(() => {
-      const heading = Array.from(document.querySelectorAll('#how-it-works h3')).find((element) =>
-        element.textContent?.includes('Generate New Paper'),
-      );
-      const footerLabel = Array.from(document.querySelectorAll('#how-it-works span')).find(
-        (element) => element.textContent?.trim() === 'Total Questions',
+      const lastRowLabel = Array.from(document.querySelectorAll('#how-it-works span')).find(
+        (element) => element.textContent?.trim() === 'Fill in the Blank',
       );
 
-      if (!(heading instanceof HTMLElement) || !(footerLabel instanceof HTMLElement)) {
-        throw new Error('Generate card content not found');
+      if (!(lastRowLabel instanceof HTMLElement)) {
+        throw new Error('Final generate row not found');
       }
 
-      const cardContent = heading.parentElement?.parentElement;
-      const footerBadge = footerLabel.parentElement;
+      const finalRow = lastRowLabel.parentElement;
+      const listViewport = lastRowLabel.closest('.space-y-2');
 
-      if (!(cardContent instanceof HTMLElement) || !(footerBadge instanceof HTMLElement)) {
-        throw new Error('Generate card structure not found');
+      if (!(finalRow instanceof HTMLElement) || !(listViewport instanceof HTMLElement)) {
+        throw new Error('Generate list structure not found');
       }
 
-      const cardRect = cardContent.getBoundingClientRect();
-      const footerRect = footerBadge.getBoundingClientRect();
+      const rowRect = finalRow.getBoundingClientRect();
+      const listRect = listViewport.getBoundingClientRect();
 
       return {
-        footerOverflow: footerRect.bottom - cardRect.bottom,
+        hiddenPixels: rowRect.bottom - listRect.bottom,
       };
     });
 
-    expect(metrics.footerOverflow).toBeLessThanOrEqual(0);
+    expect(metrics.hiddenPixels).toBeLessThanOrEqual(0);
   });
 });
