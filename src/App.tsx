@@ -885,9 +885,11 @@ const BARREL_END_RATIO = BARREL_END_VB_X / PEN_VIEWBOX_W;
 const PEN_NIB_GAP_PX = 75;
 const MOBILE_PEN_NIB_GAP_PX = 56;
 const MOBILE_PEN_LEFT_SHIFT_PX = -42;
-const MOBILE_PEN_BARREL_SCALE_Y = 1.22;
-const MOBILE_PEN_CONNECTOR_SCALE_Y = 1.14;
 const MOBILE_PEN_ROW_OFFSET_PX = 3;
+const MOBILE_PEN_BARREL_PATH =
+  "M0 7H1492.37C1510.04 7 1524.37 21.33 1524.37 39V111C1524.37 128.67 1510.04 143 1492.37 143H0V7Z";
+const MOBILE_PEN_CONNECTOR_PATH =
+  "M1540.31 27C1540.31 21.477 1544.79 17 1550.31 17C1555.83 17 1560.31 21.477 1560.31 27V123C1560.31 128.523 1555.83 133 1550.31 133C1544.79 133 1540.31 128.523 1540.31 123V27Z";
 
 const WordRotator = ({
   t,
@@ -931,12 +933,8 @@ const WordRotator = ({
   const penTransform = isMobile
     ? "scale(0.552)"
     : "scale(1.10, 1.20)";
-  const penBarrelTransform = isMobile
-    ? `translate(0 ${PEN_VIEWBOX_CENTER_Y}) scale(1 ${MOBILE_PEN_BARREL_SCALE_Y}) translate(0 ${-PEN_VIEWBOX_CENTER_Y})`
-    : undefined;
-  const penConnectorTransform = isMobile
-    ? `translate(0 ${PEN_VIEWBOX_CENTER_Y}) scale(1 ${MOBILE_PEN_CONNECTOR_SCALE_Y}) translate(0 ${-PEN_VIEWBOX_CENTER_Y})`
-    : undefined;
+  const barrelPath = isMobile ? MOBILE_PEN_BARREL_PATH : svgPathsPen.p32fa6980;
+  const connectorPath = isMobile ? MOBILE_PEN_CONNECTOR_PATH : svgPathsPen.p2c92ab00;
   const rotatingWordClassName = isMobile
     ? "font-['Anybody',sans-serif] font-black tracking-tighter whitespace-nowrap text-[1.7rem] sm:text-4xl md:text-8xl lg:text-9xl"
     : "font-['Anybody',sans-serif] font-black tracking-tighter whitespace-nowrap text-3xl sm:text-4xl md:text-8xl lg:text-9xl";
@@ -1033,12 +1031,8 @@ const WordRotator = ({
           >
           <g id="Frame 39523">
             <g id="Vector">
-              <g transform={penBarrelTransform}>
-                <path d={svgPathsPen.p32fa6980} fill="url(#paint0_linear_hero)" />
-              </g>
-              <g transform={penConnectorTransform}>
-                <path d={svgPathsPen.p2c92ab00} fill="url(#paint1_linear_hero)" />
-              </g>
+              <path d={barrelPath} fill="url(#paint0_linear_hero)" />
+              <path d={connectorPath} fill="url(#paint1_linear_hero)" />
               <path d={svgPathsPen.p21f97800} fill="url(#paint2_linear_hero)" />
             </g>
           </g>

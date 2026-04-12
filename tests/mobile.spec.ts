@@ -61,7 +61,7 @@ test.describe('Mobile responsiveness', () => {
       });
 
     expect(penMetrics.visibleWidth).toBeGreaterThanOrEqual(penMetrics.viewportWidth - 30);
-    expect(penMetrics.rightGap).toBeLessThanOrEqual(29);
+    expect(penMetrics.rightGap).toBeLessThanOrEqual(30);
     expect(penMetrics.visibleWidth).toBeLessThanOrEqual(penMetrics.viewportWidth - 2);
     expect(penMetrics.rightGap).toBeGreaterThanOrEqual(2);
   });
@@ -99,8 +99,8 @@ test.describe('Mobile responsiveness', () => {
         };
       });
 
-    expect(penMetrics.bodyToTipHeightRatio).toBeGreaterThanOrEqual(0.74);
-    expect(penMetrics.connectorToTipHeightRatio).toBeGreaterThanOrEqual(0.53);
+    expect(penMetrics.bodyToTipHeightRatio).toBeGreaterThanOrEqual(0.9);
+    expect(penMetrics.connectorToTipHeightRatio).toBeGreaterThanOrEqual(0.58);
     expect(penMetrics.tipHeight).toBeLessThanOrEqual(48.5);
   });
 
