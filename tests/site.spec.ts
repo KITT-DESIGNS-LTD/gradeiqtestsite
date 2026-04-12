@@ -26,6 +26,40 @@ test.describe('Grade IQ Website', () => {
     await expect(demoLink).toHaveAttribute('target', '_blank');
   });
 
+  test('desktop language menu stays close to the trigger center', async ({ page }) => {
+    const languageButton = page.getByRole('button', { name: 'Language' });
+    await languageButton.click();
+
+    const alignment = await page.evaluate(() => {
+      const trigger = Array.from(
+        document.querySelectorAll('button[aria-label="Language"]'),
+      ).find((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      });
+      const englishOption = Array.from(
+        document.querySelectorAll('button[aria-label="English"]'),
+      ).find((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      });
+
+      if (!trigger || !englishOption) {
+        throw new Error('Language menu elements not found');
+      }
+
+      const triggerRect = trigger.getBoundingClientRect();
+      const optionRect = englishOption.getBoundingClientRect();
+
+      return {
+        centerDelta:
+          optionRect.left + optionRect.width / 2 - (triggerRect.left + triggerRect.width / 2),
+      };
+    });
+
+    expect(alignment.centerDelta).toBeLessThanOrEqual(6);
+  });
+
   test('contact form is present', async ({ page }) => {
     await page.evaluate(() => {
       document.getElementById('contact-section')?.scrollIntoView();

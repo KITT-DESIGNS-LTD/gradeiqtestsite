@@ -31,6 +31,40 @@ test.describe('Mobile responsiveness', () => {
     await expect(page.getByRole('button', { name: 'English' })).toBeVisible();
   });
 
+  test('mobile language menu sits slightly left of the trigger', async ({ page }) => {
+    const languageButton = page.getByRole('button', { name: 'Language' });
+    await languageButton.click();
+
+    const alignment = await page.evaluate(() => {
+      const trigger = Array.from(
+        document.querySelectorAll('button[aria-label="Language"]'),
+      ).find((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      });
+      const englishOption = Array.from(
+        document.querySelectorAll('button[aria-label="English"]'),
+      ).find((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      });
+
+      if (!trigger || !englishOption) {
+        throw new Error('Language menu elements not found');
+      }
+
+      const triggerRect = trigger.getBoundingClientRect();
+      const optionRect = englishOption.getBoundingClientRect();
+
+      return {
+        centerDelta:
+          optionRect.left + optionRect.width / 2 - (triggerRect.left + triggerRect.width / 2),
+      };
+    });
+
+    expect(alignment.centerDelta).toBeLessThanOrEqual(-21);
+  });
+
   test('mobile menu opens and shows demo link', async ({ page }) => {
     const hamburger = page.getByRole('button', { name: 'Toggle menu' });
     await hamburger.click();
