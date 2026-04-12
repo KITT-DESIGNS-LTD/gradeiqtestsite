@@ -60,6 +60,8 @@ test.describe('Mobile responsiveness', () => {
         };
       });
 
+    expect(penMetrics.visibleWidth).toBeGreaterThanOrEqual(penMetrics.viewportWidth - 22);
+    expect(penMetrics.rightGap).toBeLessThanOrEqual(22);
     expect(penMetrics.visibleWidth).toBeLessThanOrEqual(penMetrics.viewportWidth - 2);
     expect(penMetrics.rightGap).toBeGreaterThanOrEqual(2);
   });
@@ -157,8 +159,8 @@ test.describe('Mobile responsiveness', () => {
       });
 
     expect(Math.abs(metrics.wordCenter - metrics.containerCenter)).toBeLessThanOrEqual(6);
-    expect(metrics.generateToPen).toBeLessThanOrEqual(40);
-    expect(metrics.penToInstantly).toBeLessThanOrEqual(40);
+    expect(metrics.generateToPen).toBeLessThanOrEqual(28);
+    expect(metrics.penToInstantly).toBeLessThanOrEqual(28);
     expect(metrics.wordBottomInset - metrics.wordTopInset).toBeLessThanOrEqual(2.5);
   });
 

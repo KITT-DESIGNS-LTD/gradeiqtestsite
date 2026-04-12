@@ -882,7 +882,7 @@ const BARREL_END_VB_X = 1524.37;
 const BARREL_END_RATIO = BARREL_END_VB_X / PEN_VIEWBOX_W;
 const PEN_NIB_GAP_PX = 75;
 const MOBILE_PEN_NIB_GAP_PX = 56;
-const MOBILE_PEN_LEFT_SHIFT_PX = -44;
+const MOBILE_PEN_LEFT_SHIFT_PX = -42;
 
 const WordRotator = ({
   t,
@@ -920,7 +920,7 @@ const WordRotator = ({
     ? "h-[96%] md:h-[150%] w-auto block overflow-visible"
     : "h-[120%] md:h-[150%] w-auto block overflow-visible";
   const penTransform = isMobile
-    ? "scale(0.50)"
+    ? "scale(0.552)"
     : "scale(1.10, 1.20)";
   const rotatingWordClassName = isMobile
     ? "font-['Anybody',sans-serif] font-black tracking-tighter whitespace-nowrap text-[1.7rem] sm:text-4xl md:text-8xl lg:text-9xl"
@@ -1187,7 +1187,7 @@ export default function App() {
           {/* Headline */}
           <div
             className={`relative flex flex-col items-center w-full ${
-              isVietnamese ? "gap-4 md:gap-6" : "gap-2 md:gap-4"
+              isVietnamese ? "gap-3 md:gap-6" : "gap-1 md:gap-4"
             }`}
           >
             <div style={{ transform: `scale(${heroScale})`, transformOrigin: "center" }}>
