@@ -878,11 +878,15 @@ import { GenerateVisualization } from "./components/GenerateVisualization";
 // after which the connector + nib begin. We anchor the pen so this barrel-end
 // sits a fixed gap to the right of the longest rotated word's right edge.
 const PEN_VIEWBOX_W = 1710.36;
+const PEN_VIEWBOX_H = 149.808;
+const PEN_VIEWBOX_CENTER_Y = PEN_VIEWBOX_H / 2;
 const BARREL_END_VB_X = 1524.37;
 const BARREL_END_RATIO = BARREL_END_VB_X / PEN_VIEWBOX_W;
 const PEN_NIB_GAP_PX = 75;
 const MOBILE_PEN_NIB_GAP_PX = 56;
 const MOBILE_PEN_LEFT_SHIFT_PX = -42;
+const MOBILE_PEN_BARREL_SCALE_Y = 1.08;
+const MOBILE_PEN_CONNECTOR_SCALE_Y = 1.06;
 
 const WordRotator = ({
   t,
@@ -922,6 +926,12 @@ const WordRotator = ({
   const penTransform = isMobile
     ? "scale(0.552)"
     : "scale(1.10, 1.20)";
+  const penBarrelTransform = isMobile
+    ? `translate(0 ${PEN_VIEWBOX_CENTER_Y}) scale(1 ${MOBILE_PEN_BARREL_SCALE_Y}) translate(0 ${-PEN_VIEWBOX_CENTER_Y})`
+    : undefined;
+  const penConnectorTransform = isMobile
+    ? `translate(0 ${PEN_VIEWBOX_CENTER_Y}) scale(1 ${MOBILE_PEN_CONNECTOR_SCALE_Y}) translate(0 ${-PEN_VIEWBOX_CENTER_Y})`
+    : undefined;
   const rotatingWordClassName = isMobile
     ? "font-['Anybody',sans-serif] font-black tracking-tighter whitespace-nowrap text-[1.7rem] sm:text-4xl md:text-8xl lg:text-9xl"
     : "font-['Anybody',sans-serif] font-black tracking-tighter whitespace-nowrap text-3xl sm:text-4xl md:text-8xl lg:text-9xl";
@@ -973,7 +983,7 @@ const WordRotator = ({
   return (
     <div
       ref={containerRef}
-      className="relative flex items-center justify-center h-[92px] md:h-[180px] w-full max-w-full"
+      className="relative flex items-center justify-center h-[86px] md:h-[180px] w-full max-w-full"
     >
       {/* Hidden measurement spans — one per word so we can size the pen to the longest */}
       {words.map((word, i) => (
@@ -1018,8 +1028,12 @@ const WordRotator = ({
           >
           <g id="Frame 39523">
             <g id="Vector">
-              <path d={svgPathsPen.p32fa6980} fill="url(#paint0_linear_hero)" />
-              <path d={svgPathsPen.p2c92ab00} fill="url(#paint1_linear_hero)" />
+              <g transform={penBarrelTransform}>
+                <path d={svgPathsPen.p32fa6980} fill="url(#paint0_linear_hero)" />
+              </g>
+              <g transform={penConnectorTransform}>
+                <path d={svgPathsPen.p2c92ab00} fill="url(#paint1_linear_hero)" />
+              </g>
               <path d={svgPathsPen.p21f97800} fill="url(#paint2_linear_hero)" />
             </g>
           </g>
@@ -1187,7 +1201,7 @@ export default function App() {
           {/* Headline */}
           <div
             className={`relative flex flex-col items-center w-full ${
-              isVietnamese ? "gap-3 md:gap-6" : "gap-1 md:gap-4"
+              isVietnamese ? "gap-2 md:gap-6" : "gap-0 md:gap-4"
             }`}
           >
             <div style={{ transform: `scale(${heroScale})`, transformOrigin: "center" }}>

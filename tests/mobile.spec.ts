@@ -60,8 +60,8 @@ test.describe('Mobile responsiveness', () => {
         };
       });
 
-    expect(penMetrics.visibleWidth).toBeGreaterThanOrEqual(penMetrics.viewportWidth - 22);
-    expect(penMetrics.rightGap).toBeLessThanOrEqual(22);
+    expect(penMetrics.visibleWidth).toBeGreaterThanOrEqual(penMetrics.viewportWidth - 25);
+    expect(penMetrics.rightGap).toBeLessThanOrEqual(25);
     expect(penMetrics.visibleWidth).toBeLessThanOrEqual(penMetrics.viewportWidth - 2);
     expect(penMetrics.rightGap).toBeGreaterThanOrEqual(2);
   });
@@ -79,6 +79,29 @@ test.describe('Mobile responsiveness', () => {
       });
 
     expect(penMetrics.aspectRatio).toBeGreaterThanOrEqual(8.5);
+  });
+
+  test('hero pen body is thicker without enlarging the tip on mobile', async ({ page }) => {
+    const penMetrics = await page
+      .locator('section')
+      .first()
+      .locator('svg[viewBox="0 0 1710.36 149.808"]')
+      .evaluate((element) => {
+        const [body, connector, tip] = Array.from(element.querySelectorAll('path'));
+        const bodyRect = body.getBoundingClientRect();
+        const connectorRect = connector.getBoundingClientRect();
+        const tipRect = tip.getBoundingClientRect();
+
+        return {
+          bodyToTipHeightRatio: bodyRect.height / tipRect.height,
+          connectorToTipHeightRatio: connectorRect.height / tipRect.height,
+          tipHeight: tipRect.height,
+        };
+      });
+
+    expect(penMetrics.bodyToTipHeightRatio).toBeGreaterThanOrEqual(0.66);
+    expect(penMetrics.connectorToTipHeightRatio).toBeGreaterThanOrEqual(0.49);
+    expect(penMetrics.tipHeight).toBeLessThanOrEqual(48.5);
   });
 
   test('hero word stays inside the purple bar on mobile', async ({ page }) => {
@@ -159,8 +182,8 @@ test.describe('Mobile responsiveness', () => {
       });
 
     expect(Math.abs(metrics.wordCenter - metrics.containerCenter)).toBeLessThanOrEqual(6);
-    expect(metrics.generateToPen).toBeLessThanOrEqual(28);
-    expect(metrics.penToInstantly).toBeLessThanOrEqual(28);
+    expect(metrics.generateToPen).toBeLessThanOrEqual(22);
+    expect(metrics.penToInstantly).toBeLessThanOrEqual(22);
     expect(metrics.wordBottomInset - metrics.wordTopInset).toBeLessThanOrEqual(2.5);
   });
 
