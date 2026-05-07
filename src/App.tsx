@@ -710,16 +710,7 @@ const SolutionRow = ({
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
               <p className="text-black mb-2">{t("chemistry_question")}</p>
-              <p
-                className="text-black text-lg py-2 min-h-[28px]"
-                style={{
-                  fontFamily:
-                    language === "vi"
-                      ? '"Be Vietnam Pro", "Prompt", sans-serif'
-                      : '"Comic Sans MS", "Marker Felt", cursive',
-                  fontWeight: language === "vi" ? 400 : undefined
-                }}
-              >
+              <p className="text-black text-sm font-medium leading-relaxed py-2 min-h-[28px] font-['Prompt',sans-serif]">
                 {chemistryTyped}
               </p>
               <div className="h-px bg-black/10 w-full mt-1" />
@@ -732,7 +723,7 @@ const SolutionRow = ({
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-black/5 shadow-sm">
               <p className="text-black mb-2">{t("physics_question")}</p>
-              <p className="text-black/80 text-sm leading-relaxed py-2 min-h-[28px] font-['Prompt',sans-serif]">
+              <p className="text-black text-sm font-medium leading-relaxed py-2 min-h-[28px] font-['Prompt',sans-serif]">
                 {physicsTyped}
               </p>
               <div className="h-px bg-black/10 w-full mt-1" />
